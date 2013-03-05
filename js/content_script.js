@@ -26,11 +26,10 @@ var modal = ( function() {
 
 		$overlay = $('<div id="overlay"></div>');
 		$modal = $('<div id="modal"></div>');
-		$image = $('<img id="target" src="imgURL" width="640" height="480">')
+		$image = $('<img id="target" src="imgURL"/>')
 
 		$modal.hide();
 		$overlay.hide();
-		$content.append($image);
 		$modal.append($image);
 
 		$(document).ready(function() {
@@ -43,7 +42,9 @@ var modal = ( function() {
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	imgURL = request.greeting;
 	document.getElementById('target').src = imgURL;
+
 	modal.open({});
+		$('body').css('overflow', 'hidden');
 });
 
 

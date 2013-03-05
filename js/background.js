@@ -1,8 +1,9 @@
 
 // Listen for a click on the camera icon.  On that click, take a screenshot.
 chrome.browserAction.onClicked.addListener(function(tab) {
+		chrome.tabs.executeScript(null, {file: "js/vendor/jquery-1.9.1.min.js"});
+
 	chrome.tabs.executeScript(null, {file: "js/content_script.js"});
-	chrome.tabs.executeScript(null, {file: "js/vendor/jquery-1.9.1.min.js"});
 	chrome.tabs.insertCSS(null, {file: "css/modal.css"})
     
     chrome.tabs.captureVisibleTab(null, function(img) {
