@@ -8,7 +8,8 @@ var modal = ( function() {
 
 			$modal.css({
 				width : settings.width || 'auto',
-				height : settings.height || 'auto'
+				height : settings.height || 'auto',
+				top : $(window).scrollTop()
 			})
 
 			$(window).bind('resize.modal', method.center);
