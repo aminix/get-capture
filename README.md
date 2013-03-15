@@ -1,4 +1,4 @@
-##SMax-Capture:
+###SMax-Capture:
 
 Take a screenshot:<br />
 1) Click on the application's icon <br />
