@@ -47,13 +47,13 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	modal.open({});
 		$('body').css('overflow', 'hidden');
 		
-	$(document).ready(function () {
 	    $('img#target').imgAreaSelect({
 	        handles: true,
+	         onSelectEnd: function (img, selection) {
+     		   alert('width: ' + selection.x1 + '; height: ' + selection.y1);
+    }
 	        
 	    });
-});
-
 });
 
 
