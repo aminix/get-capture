@@ -27,11 +27,13 @@ var modal = ( function() {
 
 		$overlay = $('<div id="overlay"></div>');
 		$modal = $('<div id="modal"></div>');
-		$image = $('<img id="target" src="imgURL"/>')
+		$image = $('<img id="target" src="imgURL"/>');
+		$canvas = $('<canvas id="canvas"/>');
 
 		$modal.hide();
 		$overlay.hide();
 		$modal.append($image);
+		$modal.append($canvas);
 
 		$(document).ready(function() {
 			$('body').append($overlay, $modal);
@@ -43,14 +45,15 @@ var modal = ( function() {
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	imgURL = request.greeting;
 	document.getElementById('target').src = imgURL;
-
 	modal.open({});
-		$('body').css('overflow', 'hidden');
-		
+		$('body').css('overflow', 'hidden');		
 	    $('img#target').imgAreaSelect({
 	        handles: true,
 	         onSelectEnd: function (img, selection) {
-     		   alert('width: ' + selection.x1 + '; height: ' + selection.y1);
+     		   $ctx = document.getElementById('canvas').getContext("2d");
+     		   $ctx.drawImage(document.getElementById('target'), selection.x1, selection.y1, selection.width, selection.height, 0, 0, selection.width,selection.height);
+   			   $imageJPG = document.getElementById('canvas').toDataURL('image/jpeg');
+			  window.open($imageJPG);
     }
 	        
 	    });
