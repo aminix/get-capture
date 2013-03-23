@@ -6,8 +6,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 	chrome.tabs.executeScript(null, {file: "js/content_script.js"});
 	chrome.tabs.insertCSS(null, {file: "css/modal.css"})
 	chrome.tabs.insertCSS(null, {file: "css/imgareaselect/imgareaselect-default.css"})
-
-    
+	
     chrome.tabs.captureVisibleTab(null, function(img) {
 	    chrome.tabs.sendMessage(tab.id, {greeting: img}, function(response) {
   	});
