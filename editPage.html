@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Editing your printscreen...</title>
+
+		<link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
+		<link rel="stylesheet" media="screen" type="text/css" href="css/editorStyle.css" />
+
+		<script src="js/vendor/jquery-1.9.1.min.js" type="text/javascript"></script>
+		<script src="js/vendor/jquery.past_imgReader.js" ></script>
+		<script src="js/vendor/colorpicker.js"></script>
+
+		<script src="js/editPage.js" ></script>
+	</head>
+	<body>
+		<canvas id="printscreen_img" > </canvas>
+		<div style="float:right;">
+			<div id="setDrawButton" style="cursor: pointer">
+				Dibujar
+			</div>
+			-------------------
+			<div id="setLineButton" style="cursor: pointer">
+				Dibujar linea
+			</div>
+			-------------------
+			<div id="setSquareButton" style="cursor: pointer">
+				Dibujar cuadrado
+			</div>
+			<div id="setFullSquareButton" style="cursor: pointer">
+				Dibujar cuadrado lleno
+			</div>
+			-------------------
+			<div id="setCircleButton" style="cursor: pointer">
+				Dibujar circulo
+			</div>
+			<div id="setFullCircleButton" style="cursor: pointer">
+				Dibujar circulo lleno
+			</div>
+		</div>
+		<div style="display: none;">
+			<div>
+				pageCoords: <span id="pageCoords"> </span>
+			</div>
+			<div>
+				clientCoords: <span id="clientCoords"> </span>
+			</div>
+			<div>
+				mousedownCoords: <span id="mousedownCoords"> </span>
+			</div>
+			<div>
+				mouseupCoords: <span id="mouseupCoords"> </span>
+			</div>
+			<div>
+				previousCoords: <span id="previousCoords"> </span>
+			</div>
+
+		</div>
+
+		<input type="color" name="colorSelector">
+		</input>
+
+	</body>
+</html>
