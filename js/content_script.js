@@ -45,7 +45,6 @@ function escapeListener(event) {
 		firstTime = undefined;
 		return false;
 	}
-
 }
 
 function getSelectedImage(img, selection) {

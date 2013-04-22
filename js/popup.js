@@ -33,9 +33,15 @@ function openEdit() {
 	
 }
 
+function extractImage() {
+	window.open(localStorage["imageJPG"]);
+	
+}
+
 $(function() {
 	$('#takeShot').click(getImageURL);
-	$('#edit').click(openEdit);
+	$('#openEditor').click(openEdit);
+	$('#extractImage').click(extractImage);
 
 });
 
