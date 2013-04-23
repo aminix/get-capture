@@ -14,6 +14,7 @@ chrome.tabs.insertCSS(null, {
 	file : "css/imgareaselect/imgareaselect-default.css"
 })
 
+
 function getImageURL() {
 	$('.popupButton').attr('disabled', '');
 	chrome.tabs.getSelected(null, function(tab) {
