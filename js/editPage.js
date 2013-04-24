@@ -38,6 +38,11 @@ function init() {
 		mouseMoveAction(e);
 	});
 	
+	document.getElementById("printEditor").addEventListener("click", function(){
+        window.print();
+        return false;
+    });
+	
 	document.getElementById("setDrawButton").addEventListener("click", function(){
         setAction(0);
     });
