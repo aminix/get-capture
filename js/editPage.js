@@ -1,260 +1,267 @@
-document.onselectstart = function(){ return false; }
-
-var ctx;
-var actions = ["draw", "line", "square", "circle"];
-var action;
+var canvas, context, canvaso, contexto;
 var fullFigure = false;
-var clicked = false;
-var mousedownCoords = [0,0];
-var mouseupCoords = [0,0];
-var previousCoords = [0,0];
-var headerHeight = 10;
-var headerWidth = 10;
-var pageCoords = [0,0];
-var clientCoords = [0,0];
-
+var tool;
+var tool_default = 'draw';
 
 $(document).ready(function(){ 
 	init();
+});
+
+function init () {
+	//Original Canvas
+	canvaso = document.getElementById('printscreen_img');
+	contexto = canvaso.getContext('2d');
+
+	//Temporary canvas
+	var container = canvaso.parentNode;
+	canvas = document.createElement('canvas');
+
+	canvas.id = 'imageTemp';
+	canvas.width = canvaso.width;
+	canvas.height = canvaso.height;
+	container.appendChild(canvas);
+
+	context = canvas.getContext('2d');
+
+	tool = new tools[tool_default]();
+
+	canvas.addEventListener('mousedown', canvasEvent, false);
+	canvas.addEventListener('mousemove', canvasEvent, false);
+	canvas.addEventListener('mouseup',   canvasEvent, false);
+	setButtonEventListener();
+	
 	var pastedImage = new Image();
 	pastedImage.src = localStorage["imageJPG"];
-	var canvas = document.getElementById('printscreen_img');
-	
+
 	setTimeout(function(){
 		canvas.height = pastedImage.naturalHeight;
 		canvas.width = pastedImage.naturalWidth;
-		ctx.drawImage(pastedImage, 0, 0);
-	},200)
-});
+		canvaso.height = pastedImage.naturalHeight;
+		canvaso.width = pastedImage.naturalWidth;
+		context.drawImage(pastedImage, 0, 0);
+		img_update();
+	},200);
+}
 
-function init() {
-	ctx = document.getElementById('printscreen_img').getContext('2d');;	
-	
-	$("#printscreen_img").mousedown(function(e){
-		mouseDownAction(e);
-    }).mouseup(function(e){
-		mouseUpAction(e);
-    }).mousemove(function(e){
-		mouseMoveAction(e);
-	});
-	
-	document.getElementById("printEditor").addEventListener("click", function(){
-        window.print();
-        return false;
-    });
-	
+function setButtonEventListener() {
 	document.getElementById("setDrawButton").addEventListener("click", function(){
-        setAction(0);
+        toolChange("draw");
     });
 	
 	document.getElementById("setLineButton").addEventListener("click", function(){
-        setAction(1);
+        toolChange("line");
     });
 	
 	document.getElementById("setSquareButton").addEventListener("click", function(){
 		fullFigure = false;
-        setAction(2);
+        toolChange("square");
     });
 	
 	document.getElementById("setCircleButton").addEventListener("click", function(){
 		fullFigure = false;
-        setAction(3);
+        toolChange("circle");
     });
 	
 	document.getElementById("setFullSquareButton").addEventListener("click", function(){
 		fullFigure = true;
-        setAction(2);
+        toolChange("square");
     });
 
 	document.getElementById("setFullCircleButton").addEventListener("click", function(){
         fullFigure = true;
-        setAction(3);
+        toolChange("circle");
     });
-
-	var colorSelector = $('input[name=colorSelector]');
-	colorSelector.change(function(event){
-		ctx.fillStyle =  colorSelector.val();
-		ctx.strokeStyle = colorSelector.val();
-	});
-
-	setAction(0);
 }
 
-function mouseDownAction(e) {
-	mousedownCoords = [e.pageX, e.pageY];
-	printInformation();
-	switch(action)
-	{
-	case 'draw':
-		draw_mouseDown(e);
-		break;
-	case 'line':
-		line_mouseDown(e);
-		break;
-	case 'square':
-		square_mouseDown(e);
-		break;
-	case 'circle':
-		circle_mouseDown(e);
-		break;
-	default:
-		//do nothing
+function canvasEvent (ev) {
+	ev._x = ev.layerX;
+	ev._y = ev.layerY;
+
+	var func = tool[ev.type];
+	if (func) {
+		func(ev);
 	}
 }
 
-function mouseUpAction(e) {
-	mouseupCoords = [e.pageX, e.pageY];
-	printInformation();
-	
-	switch(action)
-	{
-	case 'draw':
-		draw_mouseUp(e);
-		break;
-	case 'line':
-		line_mouseUp(e);
-		break;
-	case 'square':
-		square_mouseUp(e);
-		break;
-	case 'circle':
-		circle_mouseUp(e);
-		break;
-	default:
-		//do nothing
+function toolChange (value) {
+	if (tools[value]) {
+		tool = new tools[value]();
 	}
 }
 
-function mouseMoveAction(e) {
-	pageCoords = [e.pageX, e.pageY];
-	clientCoords = [e.clientX, e.clientY];
-	printInformation();
-	
-	switch(action)
-	{
-	case 'draw':
-		draw_mouseMove(e);
-		break;
-	case 'line':
-		line_mouseMove(e);
-		break;
-	case 'square':
-		square_mouseMove(e);
-		break;
-	case 'circle':
-		circle_mouseMove(e);
-		break;
-	default:
-		//do nothing
-	}
+function img_update() {
+	contexto.drawImage(canvas, 0, 0);
+	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function setAction(actionNumber) {
-	action = actions[actionNumber];
-	resetClasses();
-	$("#printscreen_img").addClass(action);
-}
-
-function resetClasses() {
-	for (a in actions) {
-		$("#printscreen_img").removeClass(a);
-	}
-}
+var tools = {};
 
 /** Draw **/
-function draw_mouseDown(e) {
-	clicked = true;
-	previousCoords = [e.pageX, e.pageY];
-}
-function draw_mouseUp(e) {
-	clicked = false;
-}
-function draw_mouseMove(e) {
-	if(clicked) {
-		ctx.beginPath();
-		ctx.moveTo(previousCoords[0] - headerWidth, previousCoords[1] - headerHeight);
-		ctx.lineTo(e.pageX - headerWidth, e.pageY - headerHeight);
-		ctx.stroke();
-		previousCoords = [e.pageX, e.pageY];
-	}
-}
+tools.draw = function () {
+	var tool = this;
+	this.started = false;
+
+	this.mousedown = function (ev) {
+		context.beginPath();
+		context.moveTo(ev._x, ev._y);
+		tool.started = true;
+	};
+
+	this.mousemove = function (ev) {
+		if (tool.started) {
+			context.lineTo(ev._x, ev._y);
+			context.stroke();
+		}
+	};
+
+	this.mouseup = function (ev) {
+		if (tool.started) {
+			tool.mousemove(ev);
+			tool.started = false;
+			img_update();
+		}
+	};
+};
 
 /** Draw Line **/
-function line_mouseDown(e) {
-	clicked = true;
-	ctx.beginPath();
-	ctx.moveTo(mousedownCoords[0] - headerWidth, mousedownCoords[1] - headerHeight);
-}
-function line_mouseUp(e) {
-	clicked = false;
-	ctx.lineTo(mouseupCoords[0] - headerWidth, mouseupCoords[1] - headerHeight);
-    ctx.stroke();
-}
-function line_mousemMve(e) {
-	if(clicked) {
-	}
-}
+tools.line = function () {
+	var tool = this;
+	this.started = false;
+
+	this.mousedown = function (ev) {
+	  tool.started = true;
+	  tool.x0 = ev._x;
+	  tool.y0 = ev._y;
+	};
+
+	this.mousemove = function (ev) {
+		if (!tool.started) {
+			return;
+		}
+
+		var x = tool.x0,
+			y = tool.y0,
+			w = ev._x,
+			h = ev._y;
+		
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		
+		context.beginPath();
+		context.moveTo(x, y);
+		clicked = false;
+		context.lineTo(w, h);
+		context.stroke();
+	};
+
+	this.mouseup = function (ev) {
+		if (tool.started) {
+			tool.mousemove(ev);
+			tool.started = false;
+			img_update();
+		}
+	};
+};
 
 /** Draw Square **/
-function square_mouseDown(e) {
-}
-function square_mouseUp(e) {
-	var x = mousedownCoords[0] - headerWidth;
-	var y = mousedownCoords[1] - headerHeight;
-	var width = mouseupCoords[0] - mousedownCoords[0];
-	var height = mouseupCoords[1] - mousedownCoords[1];
-	if(fullFigure) {
-		ctx.fillRect(x, y, width, height);
-	} else {
-		ctx.strokeRect(x, y, width, height);
-	}
-}
-function square_mouseMove(e) {
-	if(clicked) {
-	}
-}
+tools.square = function () {
+	var tool = this;
+	this.started = false;
+
+	this.mousedown = function (ev) {
+		tool.started = true;
+		tool.x0 = ev._x;
+		tool.y0 = ev._y;
+	};
+
+	this.mousemove = function (ev) {
+		if (!tool.started) {
+			return;
+		}
+
+		var x = Math.min(ev._x,  tool.x0),
+			y = Math.min(ev._y,  tool.y0),
+			w = Math.abs(ev._x - tool.x0),
+			h = Math.abs(ev._y - tool.y0);
+
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		
+		if (!w || !h) {
+			return;
+		}
+
+		if(fullFigure) {
+			context.fillRect(x, y, w, h);
+		} else {
+			context.strokeRect(x, y, w, h);
+		}
+	};
+
+	this.mouseup = function (ev) {
+		if (tool.started) {
+			tool.mousemove(ev);
+			tool.started = false;
+			img_update();
+		}
+	};
+};
 
 /** Draw Circle **/
-function circle_mouseDown(e) {
-}
-function circle_mouseUp(e) {
-	var x1 = mousedownCoords[0] - headerWidth;
-	var y1 = (mousedownCoords[1] - headerHeight);
-	var x2 = mouseupCoords[0] - headerWidth;
-	var y2 = (mouseupCoords[1] - headerHeight);
-	var yMiddle = (y1 + y2) / 2;
-	if(fullFigure) {
-		ctx.beginPath();
-		ctx.moveTo(x1,yMiddle);
-		ctx.bezierCurveTo(x1, y2, x2, y2, x2, yMiddle);
-		ctx.stroke();
-		ctx.bezierCurveTo(x2, y1, x1, y1, x1, yMiddle);
-		ctx.stroke();
-		ctx.fill();
-	} else {
-		ctx.beginPath();
-		ctx.moveTo(x1,yMiddle);
-		ctx.bezierCurveTo(x1, y2, x2, y2, x2, yMiddle);
-		ctx.stroke();
-		ctx.bezierCurveTo(x2, y1, x1, y1, x1, yMiddle);
-		ctx.stroke();
-	}
-}
-function circle_mouseMove(e) {
-	if(clicked) {
-	}
-}
+tools.circle = function () {
+	var tool = this;
+	this.started = false;
+
+	this.mousedown = function (ev) {
+	  tool.started = true;
+	  tool.x0 = ev._x;
+	  tool.y0 = ev._y;
+	};
+
+	this.mousemove = function (ev) {
+		if (!tool.started) {
+			return;
+		}
+
+		var x1 = tool.x0,
+			y1 = tool.y0,
+			x2 = ev._x,
+			y2 = ev._y,
+			yMiddle = (y1 + y2) / 2;
+		
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		
+		context.beginPath();
+		context.moveTo(x1,yMiddle);
+		context.bezierCurveTo(x1, y2, x2, y2, x2, yMiddle);
+		context.stroke();
+		context.bezierCurveTo(x2, y1, x1, y1, x1, yMiddle);
+		context.stroke();
+		if(fullFigure) {
+			context.fill();
+		}
+	};
+
+	this.mouseup = function (ev) {
+		if (tool.started) {
+			tool.mousemove(ev);
+			tool.started = false;
+			img_update();
+		}
+	};
+};
+
 
 /** Draw Image **/
 $("html").pasteImageReader(function(results) {
 	var pastedImage = new Image();
 	pastedImage.src = results.dataURL;
-	var canvas = document.getElementById('printscreen_img');
 	
 	setTimeout(function(){
 		canvas.height = pastedImage.naturalHeight;
 		canvas.width = pastedImage.naturalWidth;
-		ctx.drawImage(pastedImage, 0, 0);
+		canvaso.height = pastedImage.naturalHeight;
+		canvaso.width = pastedImage.naturalWidth;
+		context.drawImage(pastedImage, 0, 0);
+		img_update();
 	},200)
 });
 
@@ -265,4 +272,3 @@ function printInformation() {
 	$("#pageCoords").text(pageCoords[0] + ", " +  pageCoords[1]);
 	$("#clientCoords").text(clientCoords[0] + ", " +  clientCoords[1]);
 }
-
