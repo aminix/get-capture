@@ -5,6 +5,9 @@ var fullFigure = false;
 var tool;
 var tool_default = 'draw';
 
+var stepArray = new Array();
+var stepNumber = -1;
+
 $(document).ready(function(){ 
 	init();
 });
@@ -24,9 +27,7 @@ function init () {
 	container.appendChild(canvas);
 
 	context = canvas.getContext('2d');
-
-	//tool = new tools[tool_default]();
-
+	
 	canvas.addEventListener('mousedown', canvasEvent, false);
 	canvas.addEventListener('mousemove', canvasEvent, false);
 	canvas.addEventListener('mouseup',   canvasEvent, false);
@@ -75,6 +76,14 @@ function setButtonEventListener() {
         fullFigure = true;
         toolChange("circle");
     });
+	
+	document.getElementById("stepBackButton").addEventListener("click", function(){
+        stepBack();
+    });
+	
+	document.getElementById("stepForwardButton").addEventListener("click", function(){
+        stepForward();
+    });
 }
 
 function canvasEvent (ev) {
@@ -97,6 +106,39 @@ function toolChange (value) {
 function img_update() {
 	contexto.drawImage(canvas, 0, 0);
 	context.clearRect(0, 0, canvas.width, canvas.height);
+	saveStep();
+}
+
+function saveStep() {
+	stepNumber++;
+	if (stepNumber < stepArray.length) {
+		stepArray.length = stepNumber; 
+	}
+	stepArray.push(canvaso.toDataURL());
+}
+
+function stepBack() {
+	if (stepNumber > 0) {
+        stepNumber--;
+        var canvasPic = new Image();
+        canvasPic.src = stepArray[stepNumber];
+        canvasPic.onload = function () { 
+			contexto.drawImage(canvasPic, 0, 0); 
+			context.clearRect(0, 0, canvas.width, canvas.height);
+		}
+    }
+}
+
+function stepForward() {
+	if (stepNumber < stepArray.length - 1) {
+        stepNumber++;
+        var canvasPic = new Image();
+        canvasPic.src = stepArray[stepNumber];
+        canvasPic.onload = function () {
+			contexto.drawImage(canvasPic, 0, 0); 
+			context.clearRect(0, 0, canvas.width, canvas.height);
+		}
+    }
 }
 
 var tools = {};
