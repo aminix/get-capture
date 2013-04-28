@@ -1,51 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Editing your printscreen...</title>
-	
-	<link rel="stylesheet" media="print"  href="css/print.css" >
-	<link rel="stylesheet" media="screen" href="css/editorStyle.css" />
-	<link rel="stylesheet" media="screen" href="css/bootstrap.min.css" >
-	
-	<script type="text/javascript" src="js/vendor/jquery-1.9.1.min.js"></script>
-	<script type="text/javascript" src="js/vendor/jquery.past_imgReader.js"></script>
-	<script type="text/javascript" src="js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="js/editPage.js"></script>
-	
-  </head>
-  <body>
-    <div id="container">
-      <canvas id="printscreen_img">
-      </canvas>
-    </div>
+	<head>
+		<meta charset="utf-8">
+		<title>Editing your printscreen...</title>
 
-	<div style="float:right;">
-		<div id="setDrawButton" style="cursor: pointer"> Dibujar</div>
-		-------------------
-		<div id="setLineButton" style="cursor: pointer"> Dibujar linea</div>
-		-------------------
-		<div id="setSquareButton" style="cursor: pointer"> Dibujar cuadrado</div>
-		<div id="setFullSquareButton" style="cursor: pointer"> Dibujar cuadrado lleno</div>
-		-------------------
-		<div id="setCircleButton" style="cursor: pointer"> Dibujar circulo</div>
-		<div id="setFullCircleButton" style="cursor: pointer"> Dibujar circulo lleno</div>
-		
-		<div id="stepBackButton" style="cursor: pointer"> <-- </div>
-		<div id="stepForwardButton" style="cursor: pointer"> --> </div>
-		
-		<a class="btn btn-success popupButton" id="printEditor" >Print Image</a>
-	</div>
-	<div style="display: none;">
-		<div>pageCoords: <span id="pageCoords"></span></div>
-		<div>clientCoords: <span id="clientCoords"></span></div>
-		<div>mousedownCoords: <span id="mousedownCoords"></span></div>
-		<div>mouseupCoords: <span id="mouseupCoords"></span></div>
-		<div>previousCoords: <span id="previousCoords"></span></div>
-	</div>
-	
-	<input id="colorPicker" type="color" name="colorSelector">
-	</input>
+		<link rel="stylesheet" media="print"  href="css/print.css" >
+		<link rel="stylesheet" media="screen" href="css/editorStyle.css" />
+		<link rel="stylesheet" media="screen" href="css/bootstrap.min.css" >
 
-  </body>
+		<script type="text/javascript" src="js/vendor/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="js/vendor/jquery.past_imgReader.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/editPage.js"></script>
+
+	</head>
+	<body>
+		<div id="container">
+			<canvas id="printscreen_img"> </canvas>
+		</div>
+		<div id="editorMenu" style="float:right;">
+			<input type="image" src="img/editorIcons/draw-freeform-line.png" id="setDrawButton">
+
+			<input type="image" src="img/editorIcons/draw-line.png" id="setLineButton">
+
+			<input type="image" src="img/editorIcons/draw-square-unfilled.png" id="setSquareButton">
+
+			<input type="image" src="img/editorIcons/draw-square.png" id="setFullSquareButton">
+
+			<input type="image" src="img/editorIcons/draw-circle-unfilled.png" id="setCircleButton">
+
+			<input type="image" src="img/editorIcons/draw-circle.png" id="setFullCircleButton">
+
+			<div id="stepBackButton" style="cursor: pointer">
+				<--
+			</div>
+			<div id="stepForwardButton" style="cursor: pointer">
+				-->
+			</div>
+			<a class="btn btn-success popupButton" id="printEditor" >Print Image</a>
+		</div>
+
+		<div style="display: none;">
+			<div>
+				pageCoords: <span id="pageCoords"></span>
+			</div>
+			<div>
+				clientCoords: <span id="clientCoords"></span>
+			</div>
+			<div>
+				mousedownCoords: <span id="mousedownCoords"></span>
+			</div>
+			<div>
+				mouseupCoords: <span id="mouseupCoords"></span>
+			</div>
+			<div>
+				previousCoords: <span id="previousCoords"></span>
+			</div>
+		</div>
+
+		<input id="colorPicker" type="color" name="colorSelector">
+		</input>
+
+	</body>
 </html>

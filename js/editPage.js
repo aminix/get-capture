@@ -91,6 +91,11 @@ function setButtonEventListener() {
 		context.fillStyle = colorSelector.val();
 		context.strokeStyle  = colorSelector.val();
 	});
+	
+	document.getElementById("printEditor").addEventListener("click", function(){
+    	window.print();
+    	return false;
+    });
 }
 
 function canvasEvent (ev) {
