@@ -1,8 +1,19 @@
 .draw {
-	cursor:url(../img/pencil.png),auto;
+	cursor:url(../img/icons/pencil2.png),url(../img/icons/pencil.png),auto;
+}
+.line {
+	cursor:crosshair
+}
+.square {
+	cursor:crosshair
+}
+.circle {
+	cursor:crosshair
 }
 
 
-#printscreen_img  {
-	border-style:solid;
-}
+#container { position: relative;}
+
+#printscreen_img { border: 1px solid white; }
+
+#imageTemp { position: absolute; top: 1px; left: 1px; }

@@ -1,3 +1,5 @@
+document.onselectstart = function(){ return false; }
+
 var canvas, context, canvaso, contexto;
 var fullFigure = false;
 var tool;
@@ -23,7 +25,7 @@ function init () {
 
 	context = canvas.getContext('2d');
 
-	tool = new tools[tool_default]();
+	//tool = new tools[tool_default]();
 
 	canvas.addEventListener('mousedown', canvasEvent, false);
 	canvas.addEventListener('mousemove', canvasEvent, false);
@@ -41,6 +43,8 @@ function init () {
 		context.drawImage(pastedImage, 0, 0);
 		img_update();
 	},200);
+	
+	toolChange(tool_default);
 }
 
 function setButtonEventListener() {
@@ -85,6 +89,7 @@ function canvasEvent (ev) {
 
 function toolChange (value) {
 	if (tools[value]) {
+		changeClass(value)
 		tool = new tools[value]();
 	}
 }
@@ -249,7 +254,6 @@ tools.circle = function () {
 	};
 };
 
-
 /** Draw Image **/
 $("html").pasteImageReader(function(results) {
 	var pastedImage = new Image();
@@ -265,10 +269,15 @@ $("html").pasteImageReader(function(results) {
 	},200)
 });
 
-function printInformation() {
-	$("#mousedownCoords").text(mousedownCoords[0] + ", " +  mousedownCoords[1]);
-	$("#mouseupCoords").text(mouseupCoords[0] + ", " +  mouseupCoords[1]);
-	$("#previousCoords").text(previousCoords[0] + ", " +  previousCoords[1]);
-	$("#pageCoords").text(pageCoords[0] + ", " +  pageCoords[1]);
-	$("#clientCoords").text(clientCoords[0] + ", " +  clientCoords[1]);
+function changeClass(tool) {
+	resetClasses();
+	$("#printscreen_img").addClass(tool);
+	$("#imageTemp").addClass(tool);
+}
+
+function resetClasses() {
+	for (tool in tools) {
+		$("#printscreen_img").removeClass(tool);
+		$("#imageTemp").removeClass(tool);
+	}
 }
