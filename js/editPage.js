@@ -84,6 +84,13 @@ function setButtonEventListener() {
 	document.getElementById("stepForwardButton").addEventListener("click", function(){
         stepForward();
     });
+	
+	var colorSelector = $('input[name=colorSelector]');
+	colorSelector.change(function(event){
+		colorSelector.val();
+		context.fillStyle = colorSelector.val();
+		context.strokeStyle  = colorSelector.val();
+	});
 }
 
 function canvasEvent (ev) {
