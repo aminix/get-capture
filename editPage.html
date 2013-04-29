@@ -15,51 +15,70 @@
 
 	</head>
 	<body>
+		<div id="editorMenu">
+			<div id="editorActions">
+				<a href="#" class="btn btn-small">
+				<input type="image" src="img/editorIcons/draw-freeform-line.png" id="setDrawButton">
+				</a>
+
+				<a href="#" class="btn btn-small">
+				<input type="image" src="img/editorIcons/draw-line.png" id="setLineButton">
+				</a>
+
+				<a href="#" class="btn btn-small">
+				<input type="image" src="img/editorIcons/draw-square-unfilled.png" id="setSquareButton">
+				</a>
+
+				<a href="#" class="btn btn-small">
+				<input type="image" src="img/editorIcons/draw-square.png" id="setFullSquareButton">
+				</a>
+
+				<a href="#" class="btn btn-small">
+				<input type="image" src="img/editorIcons/draw-circle-unfilled.png" id="setCircleButton">
+				</a>
+
+				<a href="#" class="btn btn-small">
+				<input type="image" src="img/editorIcons/draw-circle.png" id="setFullCircleButton">
+				</a>
+
+				<a href="#" class="btn btn-small">
+				<input type="image" src="img/editorIcons/undo.png" id="stepBackButton">
+				</a>
+
+				<a href="#" class="btn btn-small">
+				<input type="image" src="img/editorIcons/redo.png" id="stepForwardButton">
+				</a>
+				
+				<input  class="btn btn-small" id="colorPicker" type="color" name="colorSelector"/>
+
+			</div>
+			<div id="options">
+				<a class="btn btn-success popupButton" id="printEditor" >Print Image</a>
+				<a class="btn btn-success popupButton" id="saveImage" >Save Image</a>
+			</div>
+		</div>
+
 		<div id="container">
 			<canvas id="printscreen_img"> </canvas>
-		</div>
-		<div id="editorMenu" style="float:right;">
-			<input type="image" src="img/editorIcons/draw-freeform-line.png" id="setDrawButton">
-
-			<input type="image" src="img/editorIcons/draw-line.png" id="setLineButton">
-
-			<input type="image" src="img/editorIcons/draw-square-unfilled.png" id="setSquareButton">
-
-			<input type="image" src="img/editorIcons/draw-square.png" id="setFullSquareButton">
-
-			<input type="image" src="img/editorIcons/draw-circle-unfilled.png" id="setCircleButton">
-
-			<input type="image" src="img/editorIcons/draw-circle.png" id="setFullCircleButton">
-
-			<div id="stepBackButton" style="cursor: pointer">
-				<--
-			</div>
-			<div id="stepForwardButton" style="cursor: pointer">
-				-->
-			</div>
-			<a class="btn btn-success popupButton" id="printEditor" >Print Image</a>
 		</div>
 
 		<div style="display: none;">
 			<div>
-				pageCoords: <span id="pageCoords"></span>
+				pageCoords: <span id="pageCoords"> </span>
 			</div>
 			<div>
-				clientCoords: <span id="clientCoords"></span>
+				clientCoords: <span id="clientCoords"> </span>
 			</div>
 			<div>
-				mousedownCoords: <span id="mousedownCoords"></span>
+				mousedownCoords: <span id="mousedownCoords"> </span>
 			</div>
 			<div>
-				mouseupCoords: <span id="mouseupCoords"></span>
+				mouseupCoords: <span id="mouseupCoords"> </span>
 			</div>
 			<div>
-				previousCoords: <span id="previousCoords"></span>
+				previousCoords: <span id="previousCoords"> </span>
 			</div>
 		</div>
-
-		<input id="colorPicker" type="color" name="colorSelector">
-		</input>
 
 	</body>
 </html>
