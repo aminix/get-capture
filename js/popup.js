@@ -1,12 +1,11 @@
 chrome.tabs.executeScript(null, {
 	file : "js/vendor/jquery-1.9.1.min.js"
 });
+//alert('Inserta');
 chrome.tabs.executeScript(null, {
 	file : "js/vendor/jquery.imgareaselect.pack.js"
 });
-chrome.tabs.executeScript(null, {
-	file : "js/content_script.js"
-});
+
 chrome.tabs.insertCSS(null, {
 	file : "css/modal.css"
 })
