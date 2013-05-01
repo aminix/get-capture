@@ -6,4 +6,6 @@ Take a screenshot:<br />
 3) Then you can: click on Edit, Save, Print, or you can just copy it.
 .<br />
 
+
+
 X) To exit the application just click the icon again 
