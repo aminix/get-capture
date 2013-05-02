@@ -21,7 +21,7 @@ function getImageURL() {
 			}, function(response) {
 				if (!response) {
 					chrome.tabs.executeScript(null, {
-						file : "js/content_script1.js"
+						file : "js/content_script.js"
 					});
 
 					chrome.tabs.getSelected(null, function(tab) {

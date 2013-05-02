@@ -13,7 +13,7 @@
     }
   ],
 	"browser_action": {
-		"default_icon": "img/icon.png",
+		"default_icon": "img/icon.ico",
 		"default_title": "Shoot!",
 		"default_popup": "popup.html"
 	},
