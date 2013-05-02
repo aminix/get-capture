@@ -19,5 +19,6 @@
 	},
 	"permissions": ["tabs", "<all_urls>"],
 	"web_accessible_resources": ["css/imgareaselect/border-h.gif", "css/imgareaselect/border-v.gif"],
+	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
 	"manifest_version": 2
 }
