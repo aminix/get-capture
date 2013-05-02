@@ -1,7 +1,7 @@
 {
-	"name": "SMax Capture",
+	"name": "Easy Capture",
 	"version": "1.0",
-	"description": "Developing...",
+	"description": "Take screenshots of websites",
 	"background": {
 		"persistent": false,
 		"scripts": ["js/background.js", "js/vendor/jquery-1.9.1.min.js"]
@@ -9,7 +9,7 @@
 	"content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["js/content_script1.js"]
+      "js": ["js/content_script.js"]
     }
   ],
 	"browser_action": {

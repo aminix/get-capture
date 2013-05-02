@@ -1,5 +1,5 @@
 
-#modal {
+#easyCaptureCanvas {
     position:fixed;
     background:rgba(0,0,0,0.2);
     border-radius:14px;
@@ -10,7 +10,7 @@
     height: 100%;
 }
 
-#target{
+#easyCaptureTarget{
     position:fixed;
     z-index: 99999;
     top: 0;
@@ -26,6 +26,6 @@
 .fixed {
 	overflow: hidden;	
 	position: fixed;
-	/*width: 100%;
-	height: 100%;*/
+	width: 100%;
+	height: 100%;
 }
