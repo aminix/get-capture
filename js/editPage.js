@@ -168,13 +168,13 @@ tools.draw = function() {
 
 	this.mousedown = function(ev) {
 		context.beginPath();
-		context.moveTo(ev._x, ev._y);
+		context.moveTo(ev._x + 13, ev._y + 40);
 		tool.started = true;
 	};
 
 	this.mousemove = function(ev) {
 		if (tool.started) {
-			context.lineTo(ev._x, ev._y);
+			context.lineTo(ev._x + 13, ev._y + 40);
 			context.stroke();
 		}
 	};
