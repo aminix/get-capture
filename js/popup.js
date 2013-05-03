@@ -58,6 +58,12 @@ $(function() {
 	$('#takeShot').click(getImageURL);
 	$('#openEditor').click(openEdit);
 	$('#extractImage').click(extractImage);
+	
+
+	$('#takeShot').click('click', trackButton);
+	$('#openEditor').click('click', trackButton);
+	$('#extractImage').click('click', trackButton);
+
 
 });
 
@@ -73,4 +79,10 @@ _gaq.push(['_trackPageview']);
   ga.src = 'https://ssl.google-analytics.com/ga.js';
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
+
+
+function trackButton(e) {
+    _gaq.push(['_trackEvent', e.target.id, 'clicked']);
+};
+
 
