@@ -93,9 +93,13 @@ function setButtonEventListener() {
 
 	var colorSelector = $('input[name=colorSelector]');
 	colorSelector.change(function(event) {
-		colorSelector.val();
 		context.fillStyle = colorSelector.val();
 		context.strokeStyle = colorSelector.val();
+	});
+	
+	var sizeSelector = $('#sizeSelect');
+	sizeSelector.change(function(event) {
+		context.lineWidth = sizeSelector.val();
 	});
 
 	document.getElementById("printEditor").addEventListener("click", function() {

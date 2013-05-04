@@ -40,3 +40,11 @@
 	width:5%;
 	margin:0px;
 }
+
+#sizeSelect {
+	width:70px;
+    --text-indent:25px;
+    --background-image:url(http://www.htmlforums.com/images/smilies/supereek.gif);
+    --background-repeat:no-repeat;
+    --background-position:3px 0;
+}
