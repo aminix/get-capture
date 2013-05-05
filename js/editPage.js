@@ -120,10 +120,14 @@ function setButtonEventListener() {
 
 	});
 
-	var colorSelector = $('input[name=colorSelector]');
+	var colorSelector = $('#colorPicker');
 	colorSelector.change(function(event) {
-		context.fillStyle = colorSelector.val();
 		context.strokeStyle = colorSelector.val();
+	});
+	
+	var colorPickerFill = $('#colorPickerFill');
+	colorPickerFill.change(function(event) {
+		context.fillStyle = colorPickerFill.val();
 	});
 	
 	var sizeSelector = $('#sizeSelect');
@@ -301,6 +305,7 @@ tools.square = function() {
 
 		if (fullFigure) {
 			context.fillRect(x, y, w, h);
+			context.strokeRect(x, y, w, h);
 		} else {
 			context.strokeRect(x, y, w, h);
 		}

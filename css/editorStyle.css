@@ -43,9 +43,14 @@ background-color: #eee !important;
 	width: 10%;
 }
 
-#colorPicker{
+#colorPickerFill{
 	height: 30px;
-	margin-top: 8%;
+	margin-top: -10px;
+}
+
+#colorPicker{
+	height: 22px;
+	margin-top: 3%;
 }
 
 #sizeSelect {
