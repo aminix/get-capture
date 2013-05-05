@@ -5,8 +5,6 @@ var firstTime, canvas, modal, image, ias;
 //When the user clicks Take Shot
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	if (request.code === 'image') {
-		alert('else 1');
-
 		if ( typeof firstTime === 'undefined') {
 			initialiseModal();
 			modal.open({});
