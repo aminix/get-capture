@@ -4,6 +4,12 @@ chrome.tabs.executeScript(null, {
 chrome.tabs.executeScript(null, {
 	file : "js/vendor/jquery.imgareaselect.pack.js"
 });
+chrome.tabs.executeScript(null, {
+	file : "js/html2canvas.js"
+});
+chrome.tabs.executeScript(null, {
+	file : "js/jquery.plugin.html2canvas.js"
+});
 
 chrome.tabs.insertCSS(null, {
 	file : "css/modal.css"
@@ -17,6 +23,7 @@ function getImageURL() {
 	chrome.tabs.getSelected(null, function(tab) {
 		chrome.tabs.captureVisibleTab(null, function(img) {
 			chrome.tabs.sendMessage(tab.id, {
+				code : 'image',
 				greeting : img
 			}, function(response) {
 				if (!response) {
@@ -27,6 +34,7 @@ function getImageURL() {
 					chrome.tabs.getSelected(null, function(tab) {
 						chrome.tabs.captureVisibleTab(null, function(img) {
 							chrome.tabs.sendMessage(tab.id, {
+								code : 'image',
 								greeting : img
 							})
 						})
@@ -49,40 +57,56 @@ function openEdit() {
 
 }
 
+function captureVisibleTabOnly() {
+	chrome.tabs.getSelected(null, function(tab) {
+		chrome.tabs.captureVisibleTab(null, function(img) {
+			localStorage["imageJPG"] = img;
+			openEdit();
+		});
+	});
+
+}
+
+function fullimage() {
+	chrome.tabs.getSelected(null, function(tab) {
+		chrome.tabs.sendMessage(tab.id, {
+			code : 'full'
+		}, function(response) {
+			if (!response) {
+				chrome.tabs.executeScript(null, {
+					file : "js/content_script.js"
+				});
+				chrome.tabs.getSelected(null, function(tab) {
+					chrome.tabs.sendMessage(tab.id, {
+						code : 'full'
+					}, function(response) {
+						localStorage["imageJPG"] = response.farewell;
+						openEdit()
+					});
+				});
+			} else {
+				localStorage["imageJPG"] = response.farewell;
+				openEdit()
+			}
+		});
+	});
+}
+
 function extractImage() {
 	window.open(localStorage["imageJPG"]);
-
 }
 
 $(function() {
 	$('#takeShot').click(getImageURL);
 	$('#openEditor').click(openEdit);
 	$('#extractImage').click(extractImage);
-	
+	$('#fullImage').click(fullimage);
+	$('#captureVisibleTab').click(captureVisibleTabOnly);
 
 	$('#takeShot').click('click', trackButton);
 	$('#openEditor').click('click', trackButton);
 	$('#extractImage').click('click', trackButton);
-
+	$('#fullImage').click(trackButton);
+	$('#captureVisibleTab').click(trackButton);
 
 });
-
-
-
-
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-40613414-1']);
-_gaq.push(['_trackPageview']);
-
-(function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = 'https://ssl.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
-
-
-function trackButton(e) {
-    _gaq.push(['_trackEvent', e.target.id, 'clicked']);
-};
-
-

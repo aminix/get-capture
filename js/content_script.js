@@ -4,26 +4,39 @@ var firstTime, canvas, modal, image, ias;
 
 //When the user clicks Take Shot
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
-	if (typeof firstTime === 'undefined'){
-		initialiseModal();
-		modal.open({});
-		$('body').addClass('fixed');
-		firstTime = true;
-	}		
-	
-	imgURL = request.greeting;
-	$('#easyCaptureTarget').attr('src', imgURL);
-	if (!ias) {
-	$('body').append($('<div id="imageAreaSelect" />'));
-	ias = $('#easyCaptureTarget').imgAreaSelect({
-			instance : true,
-			handles : true,
-			onSelectEnd : getSelectedImage,
-			parent: '#imageAreaSelect'
-		});
-	}
-	$('body').on('keydown', escapeListener);
+	if (request.code === 'image') {
+		alert('else 1');
 
+		if ( typeof firstTime === 'undefined') {
+			initialiseModal();
+			modal.open({});
+			$('body').addClass('fixed');
+			firstTime = true;
+		}
+
+		imgURL = request.greeting;
+		$('#easyCaptureTarget').attr('src', imgURL);
+		if (!ias) {
+			$('body').append($('<div id="imageAreaSelect" />'));
+			ias = $('#easyCaptureTarget').imgAreaSelect({
+				instance : true,
+				handles : true,
+				onSelectEnd : getSelectedImage,
+				parent : '#imageAreaSelect'
+			});
+		}
+		$('body').on('keydown', escapeListener);
+	} else {
+		var canvas = $('body').html2canvas({
+			proxy : '',
+			onrendered : function(canvas) {
+				var img = canvas.toDataURL()
+			  sendResponse({farewell: img});
+			},
+		});
+
+	}
+	return true;
 });
 
 function escapeListener(event) {
@@ -50,7 +63,7 @@ function getSelectedImage(img, selection) {
 
 function initialiseModal() {
 	modal = ( function() {
-			var method = {}  ;
+			var method = {};
 
 			// Open the modal
 			method.open = function(settings) {
@@ -68,7 +81,7 @@ function initialiseModal() {
 
 			$image.hide();
 
-				$('body').append($image, canvas);
+			$('body').append($image, canvas);
 
 			return method;
 		}());

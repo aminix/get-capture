@@ -31,14 +31,15 @@ function init() {
 
 	context = canvas.getContext('2d');
 
+
 	canvas.addEventListener('mousedown', canvasEvent, false);
 	canvas.addEventListener('mousemove', canvasEvent, false);
 	canvas.addEventListener('mouseup', canvasEvent, false);
+
 	setButtonEventListener();
 
 	var pastedImage = new Image();
 	pastedImage.src = localStorage["imageJPG"];
-
 	setTimeout(function() {
 		canvas.height = pastedImage.naturalHeight;
 		canvas.width = pastedImage.naturalWidth;
@@ -52,43 +53,71 @@ function init() {
 }
 
 function setButtonEventListener() {
-	
-	saveFunctionality();
 
-	document.getElementById("setDrawButton").addEventListener("click", function() {
+	$("#setDrawButton").click( function() {
+		console.log('draw');
 		toolChange("draw");
+		return false;
 	});
 
-	document.getElementById("setLineButton").addEventListener("click", function() {
+	$("#setLineButton").click(function() {
+				console.log('line');
+
 		toolChange("line");
+				return false;
+
 	});
 
-	document.getElementById("setSquareButton").addEventListener("click", function() {
+	$("#setSquareButton").click(function() {
+				console.log('sqare');
+
 		fullFigure = false;
 		toolChange("square");
+				return false;
+
 	});
 
-	document.getElementById("setCircleButton").addEventListener("click", function() {
+	$("#setCircleButton").click(function() {
+				console.log('circle');
+
 		fullFigure = false;
 		toolChange("circle");
+				return false;
+
 	});
 
-	document.getElementById("setFullSquareButton").addEventListener("click", function() {
+	$("#setFullSquareButton").click(function() {
+				console.log('square full');
+
 		fullFigure = true;
 		toolChange("square");
+				return false;
+
 	});
 
-	document.getElementById("setFullCircleButton").addEventListener("click", function() {
+	$("#setFullCircleButton").click(function() {
+				console.log('circle full');
+
 		fullFigure = true;
 		toolChange("circle");
+				return false;
+
 	});
 
-	document.getElementById("stepBackButton").addEventListener("click", function() {
+	$("#stepBackButton").click(function() {
+				console.log('back');
+
 		stepBack();
+				return false;
+
 	});
 
-	document.getElementById("stepForwardButton").addEventListener("click", function() {
+	$("#stepForwardButton").click(function() {
+				console.log('forward');
+
 		stepForward();
+				return false;
+
 	});
 
 	var colorSelector = $('input[name=colorSelector]');
@@ -102,10 +131,28 @@ function setButtonEventListener() {
 		context.lineWidth = sizeSelector.val();
 	});
 
-	document.getElementById("printEditor").addEventListener("click", function() {
+	$("#printEditor").click(function() {
 		window.print();
 		return false;
 	});
+	
+	saveFunctionality();
+	
+
+	$('#setDrawButton').click('click', trackButton);
+	$('#setLineButton').click('click', trackButton);
+	$('#setSquareButton').click('click', trackButton);
+	$('#setFullSquareButton').click('click', trackButton);
+	$('#setCircleButton').click('click', trackButton);
+	$('#setFullCircleButton').click('click', trackButton);
+	$('#stepBackButton').click('click', trackButton);
+	$('#stepForwardButton').click('click', trackButton);
+	$('#colorSelector').click('click', trackButton);
+	$('#printEditor').click('click', trackButton);
+	$('#colorSelector').click('click', trackButton);
+	$('#sizeSelect').click('click', trackButton);
+
+
 }
 
 function canvasEvent(ev) {
@@ -172,13 +219,13 @@ tools.draw = function() {
 
 	this.mousedown = function(ev) {
 		context.beginPath();
-		context.moveTo(ev._x + 13, ev._y + 40);
+		context.moveTo(ev._x, ev._y);
 		tool.started = true;
 	};
 
 	this.mousemove = function(ev) {
 		if (tool.started) {
-			context.lineTo(ev._x + 13, ev._y + 40);
+			context.lineTo(ev._x, ev._y);
 			context.stroke();
 		}
 	};
@@ -341,7 +388,6 @@ function resetClasses() {
 function saveFunctionality() {
 
 	$('body').on('keyup', '#fileName', function(event) {
-		console.log($('#fileName').val());
 		if ($('#fileName').val()) {
 			$('#saveButton').removeClass('disabled');
 			$('#saveButton').attr('download', $('#fileName').val());
@@ -368,7 +414,7 @@ function saveFunctionality() {
 	$('#saveImage').popover({
 		html : true,
 		content : root.html(),
-		placement : 'left'
+		placement : 'right'
 
 	});
 
@@ -377,15 +423,6 @@ function saveFunctionality() {
 		$('#fileName').focus();
 		$('#saveButton').attr('href', data);
 	});
-	
+
 }
 
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-40613414-1']);
-_gaq.push(['_trackPageview']);
-
-(function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = 'https://ssl.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();

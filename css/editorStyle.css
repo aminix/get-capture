@@ -1,5 +1,10 @@
+body
+{
+background-color: #eee !important;
+}
+
 .draw {
-	cursor:url(../img/icons/pencil.png),auto;
+	cursor:url(../img/icons/pencil.cur), auto;
 }
 .line {
 	cursor:crosshair
@@ -10,10 +15,8 @@
 .circle {
 	cursor:crosshair
 }
-#container {
-	position:relative;
-}
 #printscreen_img {
+	position: relative;
 	border:1px solid white;
 	margin:0% 2% 0% 2%;
 }
@@ -26,25 +29,26 @@
 #fileName {
 	width:80%;
 }
-#editorMenu {
-	margin:2% 20% 2% 2%;
+#actionsEditor {
+	margin:2% 0% 2% 2%;
 }
-#editorActions {
-	display:inline;
+#container {
+	position: relative;
 }
 #options {
-	display:inline;
-	float:right;
+	margin-top: 10%;
 }
-#colorPicker {
-	width:5%;
-	margin:0px;
+
+#panelEditor {
+	width: 10%;
+}
+
+#colorPicker{
+	height: 30px;
+	margin-top: 8%;
 }
 
 #sizeSelect {
 	width:70px;
-    --text-indent:25px;
-    --background-image:url(http://www.htmlforums.com/images/smilies/supereek.gif);
-    --background-repeat:no-repeat;
-    --background-position:3px 0;
 }
+
