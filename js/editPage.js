@@ -1,4 +1,6 @@
 var ESCAPE_KEY = 27;
+var RETURN_KEY = 13;
+
 
 document.onselectstart = function() {
 	return false;
@@ -414,6 +416,14 @@ function saveFunctionality() {
 			$('#saveImage').popover('hide');
 		}
 	});
+	
+	
+	$('body').on('keydown','#fileName', function(event) {
+		if (event.keyCode === RETURN_KEY) {
+			 $('a#saveButton')[0].click()
+		}
+	});
+
 
 	var root = $('<div/>').append($('<div id="popoverContainer"/>').append($('<input type="text" placeholder="Filename to save" id="fileName"></input>'), $('<span>.jpeg</span>'), $('<a class="btn btn-small disabled" id="saveButton" >Save!</a>')));
 	$('#saveImage').popover({
@@ -428,6 +438,6 @@ function saveFunctionality() {
 		$('#fileName').focus();
 		$('#saveButton').attr('href', data);
 	});
-
+	
 }
 
