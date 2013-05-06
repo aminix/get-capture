@@ -4,6 +4,7 @@ var firstTime, canvas, modal, image, ias;
 
 //When the user clicks Take Shot
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+	console.log('entra');
 	if (request.code === 'image') {
 		if ( typeof firstTime === 'undefined') {
 			initialiseModal();
@@ -13,6 +14,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 		}
 
 		imgURL = request.greeting;
+		console.log('imgURL: ' + imgURL);
 		$('#easyCaptureTarget').attr('src', imgURL);
 		if (!ias) {
 			$('body').append($('<div id="imageAreaSelect" />'));
@@ -55,6 +57,8 @@ function getSelectedImage(img, selection) {
 	$ctx.drawImage(document.getElementById('easyCaptureTarget'), selection.x1, selection.y1, selection.width, selection.height, 0, 0, selection.width, selection.height);
 	$imageJPG = document.getElementById('easyCaptureCanvas').toDataURL('image/jpeg');
 	chrome.extension.sendMessage({
+		console.log('setea imagen');
+		type: 'set-image',
 		imageJPG : $imageJPG
 	});
 }
