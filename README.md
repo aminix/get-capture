@@ -11,3 +11,6 @@ The editor!
 - It doesn't only works with images taken with Get-Capture, once you opened the editor you can press 'Ctrl+v' and paste any image you have on you clipboard! 
 - Put it a name and download it.
 - Or, if you need, print it.
+
+Hope you enjoy it!
+Amina Layco & Daniel Orozco
