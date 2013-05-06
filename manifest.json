@@ -1,6 +1,6 @@
 {
 	"name": "Get-Capture",
-	"version": "1.0",
+	"version": "1.0.1",
 	"description": "Free and easy way to take screenshots on Google Chrome!",
 	"background": {
 		"persistent": false,
