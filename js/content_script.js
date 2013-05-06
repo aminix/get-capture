@@ -4,6 +4,7 @@ var firstTime, canvas, modal, image, ias;
 
 //When the user clicks Take Shot
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+	$('body').focus();
 	if (request.code === 'image') {
 		if ( typeof firstTime === 'undefined') {
 			initialiseModal();
@@ -11,14 +12,18 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 			$('body').addClass('fixed');
 			firstTime = true;
 		}
-
 		imgURL = request.greeting;
 		$('#easyCaptureTarget').attr('src', imgURL);
 		if (!ias) {
+			debugger;
 			$('body').append($('<div id="imageAreaSelect" />'));
 			ias = $('#easyCaptureTarget').imgAreaSelect({
 				instance : true,
 				handles : true,
+				x1: 0,
+				y2: 0,
+				x2: 200,
+				y2: 200,
 				onSelectEnd : getSelectedImage,
 				parent : '#imageAreaSelect'
 			});
