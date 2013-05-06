@@ -12,5 +12,5 @@ The editor!
 - Put it a name and download it.
 - Or, if you need, print it.
 
-Hope you enjoy it!
+Hope you enjoy it!.
 Amina Layco & Daniel Orozco
