@@ -58,17 +58,33 @@ background-color: #eee !important;
 }
 
 #widthLabel {
-	width: 70px;
+	width: 72px;
+	min-height: 20px;
+	margin-top: 8px;
+	margin-bottom: 1px;
+	text-align:center;
 }
 
 #heightLabel {
-	width: 70px;
+	width: 72px;
+	min-height: 20px;
+	margin-top: 8px;
+	margin-bottom: 1px;
+	text-align:center;
 }
 
 #newWidthInput  {
-	width:70px;
+	width:72px;
 }
 
 #newHeightInput  {
-	width:70px;
+	width:72px;
+}
+
+#setResizeButton {
+	margin-top: -10px;
+}
+
+#setResetsButton {
+	margin-top: -10px;
 }

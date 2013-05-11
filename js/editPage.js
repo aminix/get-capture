@@ -13,6 +13,9 @@ var tool_default = 'draw';
 var stepArray = new Array();
 var stepNumber = -1;
 
+var naturalHeight;
+var naturalWidth;
+
 $(document).ready(function() {
 	init();
 });
@@ -43,13 +46,15 @@ function init() {
 	var pastedImage = new Image();
 	pastedImage.src = localStorage["imageJPG"];
 	setTimeout(function() {
-		canvas.height = pastedImage.naturalHeight;
-		canvas.width = pastedImage.naturalWidth;
-		canvaso.height = pastedImage.naturalHeight;
-		canvaso.width = pastedImage.naturalWidth;
+		naturalHeight = pastedImage.naturalHeight;
+		naturalWidth = pastedImage.naturalWidth;
+		canvas.height = naturalHeight;
+		canvas.width = naturalWidth;
+		canvaso.height = naturalHeight;
+		canvaso.width = naturalWidth;
 		
-		$("#newWidthInput").attr("value", pastedImage.naturalWidth);
-		$("#newHeightInput").attr("value", pastedImage.naturalHeight);
+		$("#newWidthInput").attr("value", naturalWidth);
+		$("#newHeightInput").attr("value", naturalHeight);
 		context.drawImage(pastedImage, 0, 0);
 		img_update();
 	}, 200);
@@ -66,67 +71,60 @@ function setButtonEventListener() {
 	});
 
 	$("#setLineButton").click(function() {
-				console.log('line');
-
+		console.log('line');
 		toolChange("line");
-				return false;
-
+		return false;
 	});
 
 	$("#setSquareButton").click(function() {
-				console.log('sqare');
-
+		console.log('sqare');
 		fullFigure = false;
 		toolChange("square");
-				return false;
-
+		return false;
 	});
 
 	$("#setCircleButton").click(function() {
-				console.log('circle');
-
+		console.log('circle');
 		fullFigure = false;
 		toolChange("circle");
-				return false;
-
+		return false;
 	});
 
 	$("#setFullSquareButton").click(function() {
-				console.log('square full');
-
+		console.log('square full');
 		fullFigure = true;
 		toolChange("square");
-				return false;
-
+		return false;
 	});
 
 	$("#setFullCircleButton").click(function() {
-				console.log('circle full');
-
+		console.log('circle full');
 		fullFigure = true;
 		toolChange("circle");
-				return false;
-
+		return false;
 	});
 
 	$("#stepBackButton").click(function() {
-				console.log('back');
-
+		console.log('back');
 		stepBack();
-				return false;
-
+		return false;
 	});
 
 	$("#stepForwardButton").click(function() {
-				console.log('forward');
-
+		console.log('forward');
 		stepForward();
-				return false;
-
+		return false;
 	});
 	
 	$("#setResizeButton").click(function() {
 		resize($('#newWidthInput').val(), $('#newHeightInput').val());
+		$("#newWidthInput").val(naturalWidth);
+		$("#newHeightInput").val(naturalHeight);
+		return false;
+	});
+	
+	$("#setResetsButton").click(function() {
+		resize(naturalWidth, naturalHeight);
 		return false;
 	});
 	
@@ -152,7 +150,6 @@ function setButtonEventListener() {
 	
 	saveFunctionality();
 	
-
 	$('#setDrawButton').click('click', trackButton);
 	$('#setLineButton').click('click', trackButton);
 	$('#setSquareButton').click('click', trackButton);
