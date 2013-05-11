@@ -57,3 +57,18 @@ background-color: #eee !important;
 	width:70px;
 }
 
+#widthLabel {
+	width: 70px;
+}
+
+#heightLabel {
+	width: 70px;
+}
+
+#newWidthInput  {
+	width:70px;
+}
+
+#newHeightInput  {
+	width:70px;
+}

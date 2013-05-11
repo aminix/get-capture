@@ -47,6 +47,9 @@ function init() {
 		canvas.width = pastedImage.naturalWidth;
 		canvaso.height = pastedImage.naturalHeight;
 		canvaso.width = pastedImage.naturalWidth;
+		
+		$("#newWidthInput").attr("value", pastedImage.naturalWidth);
+		$("#newHeightInput").attr("value", pastedImage.naturalHeight);
 		context.drawImage(pastedImage, 0, 0);
 		img_update();
 	}, 200);
@@ -121,7 +124,12 @@ function setButtonEventListener() {
 				return false;
 
 	});
-
+	
+	$("#setResizeButton").click(function() {
+		resize($('#newWidthInput').val(), $('#newHeightInput').val());
+		return false;
+	});
+	
 	var colorSelector = $('#colorPicker');
 	colorSelector.change(function(event) {
 		context.strokeStyle = colorSelector.val();
@@ -214,6 +222,19 @@ function stepForward() {
 			context.clearRect(0, 0, canvas.width, canvas.height);
 		}
 	}
+}
+function resize(width, height) {
+	var oldCanvas = canvaso.toDataURL("image/png");
+	var img = new Image();
+	img.src = oldCanvas;
+	canvaso.width = width;
+	canvaso.height = height;
+	canvas.width = width;
+	canvas.height = height;
+	img.onload = function (){
+		context.drawImage(img, 0, 0, width, height);
+		img_update();
+	};
 }
 
 var tools = {};
