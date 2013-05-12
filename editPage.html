@@ -59,27 +59,45 @@
 					<div id="options" class="row">
 						<a class="btn btn-success popupButton btn-block" id="printEditor" >Print Image</a>
 						<a class="btn btn-success popupButton btn-block" id="saveImage" >Download</a>
-						<a  target="_blank"
-						href="https://www.facebook.com/dialog/oauth?client_id=109557755915113&response_type=token&scope=publish_actions user_photos publish_stream&redirect_uri=http://www.facebook.com/connect/login_success.html"
-						class="btn btn-success popupButton btn-block" id="facebookConnect"> Facebook </a>
-						<a class="btn btn-success popupButton btn-block" id="setURL" >SET url</a>
-
+						<a class="btn btn-warning popupButton btn-block" data-toggle="modal" data-target="#shareModal">Launch modal</a>
 					</div>
 
 				</div>
-				<form id ='uploadForm' enctype="multipart/form-data"  method='post'>
-					<input name="message" type="text" value="sdfsd">	
-					<input type="submit" value="Upload" id="uploadButton" />	 
-				</form>			 
-				<img id="uploadImage" />
-					<div>
-						<div id="container" class="span8">
-							<input name="canvasa"><canvas name="canvas" id="printscreen_img"> </canvas></input>
-						</div>
+				<div>
+					<div id="container" class="span8">
+						<canvas name="canvas" id="printscreen_img"></canvas>
 					</div>
+				</div>
 
 			</div>
 		</div>
-
+		
+		
+<!-- Code for modal -->		
+		
+		<div id="shareModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					×
+				</button>
+				<h3 id="myModalLabel">Modal header</h3>
+			</div>
+			<div class="modal-body">
+				<p>
+					One fine body…
+				</p>
+				<a  target="_blank"
+				href="https://www.facebook.com/dialog/oauth?client_id=109557755915113&response_type=token&scope=publish_actions user_photos publish_stream&redirect_uri=http://www.facebook.com/connect/login_success.html"
+				class="btn btn-warning popupButton btn-block" id="facebookConnect"> Facebook </a>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">
+					Close
+				</button>
+				<button class="btn btn-primary">
+					Save changes
+				</button>
+			</div>
+		</div>
 	</body>
 </html>

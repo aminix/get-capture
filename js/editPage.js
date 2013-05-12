@@ -154,9 +154,6 @@ function setButtonEventListener() {
 	$('#printEditor').click('click', trackButton);
 	$('#colorSelector').click('click', trackButton);
 	$('#sizeSelect').click('click', trackButton);
-	$('#setURL').click('click', setURL);
-
-
 
 }
 
@@ -439,37 +436,41 @@ function saveFunctionality() {
 }
 
 function onFacebookLogin() {
-		chrome.tabs.getAllInWindow(null, function(tabs) {
-			for (var i = 0; i < tabs.length; i++) {
-				if (tabs[i].url.indexOf("http://www.facebook.com/connect/login_success.html") == 0) {
-					var params = tabs[i].url.split('#')[1];
-					localStorage.accessToken = params;
-					chrome.tabs.onUpdated.removeListener(onFacebookLogin);
-					publishImage();
-					return;
-				}
+	chrome.tabs.getAllInWindow(null, function(tabs) {
+		for (var i = 0; i < tabs.length; i++) {
+			if (tabs[i].url.indexOf("http://www.facebook.com/connect/login_success.html") == 0) {
+				var params = tabs[i].url.split('#')[1];
+				localStorage.accessToken = params;
+				chrome.tabs.onUpdated.removeListener(onFacebookLogin);
+				publishImage();
+				return;
 			}
+		}
 
-		});
+	});
 
 }
 
 chrome.tabs.onUpdated.addListener(onFacebookLogin);
 
-function publishImage() {image
-	console.log('lala ' + localStorage["accessToken"]);
-	var postMSG = "Get Capture!";
-	var imgURLa = "http://farm4.staticflickr.com/3332/3451193407_b7f047f4b4_o.jpg";
-	var image = $('#uploadImage').attr('src').split(',')[1];
-//	console.log('image es: ' +  contexto.getImageData(0, 0, 10, 10));
-	console.log('src es: ' + image);
-	//change with your external photo url
-	var formData = new FormData();
-	formData.append("url", image);
+function publishImage() { image
+	var image = localStorage["imageJPG"];
+	var encodedPng = image.split(',')[1];
+	encodedPng = atob(encodedPng);
 	
-	var url = 'https://graph.facebook.com/me/photos?' + localStorage["accessToken"];
-	console.log('url es: ' + url);
+	var ab = new ArrayBuffer(encodedPng.length);
+	var ia = new Uint8Array(ab);
+	for (var i = 0; i < encodedPng.length; i++) {
+		ia[i] = encodedPng.charCodeAt(i);
+	}
 
+	var formData = new FormData();
+	var oBlob = new Blob([ia], {
+		type : "image/png"
+	});
+	formData.append("source", oBlob, 'screenshot.png');
+
+	var url = 'https://graph.facebook.com/me/photos?' + localStorage["accessToken"];
 
 	$.ajax({
 		url : url,
@@ -483,29 +484,5 @@ function publishImage() {image
 			alert("POST SUCCESSFUL");
 		}
 	});
-}
 
-function valueToByteArray(value, bytes_length) {
-    var bytes_array = [];
-    while (bytes_length > 0){
-        var byte = value & 0xFF;
-        value >>= 8;
-        bytes_length--;
-
-        bytes_array.push(byte);
-    }
-    return bytes_array.reverse();
-}
-
-function setURL(){
-//	var extractedImage = $('#extractedImage');
-//	extractedImage.attr('value', $('#printscreen_img')[0].toDataURL("image/jpeg"));
-//	var form = $('#uploadForm');
-//	var url = 'https://graph.facebook.com/me/photos?' + localStorage["accessToken"];
-//	form.attr('action' , url)
-//	form.append("url", 'http://farm4.staticflickr.com/3332/3451193407_b7f047f4b4_o.jpg');
-	
-	var uploadImage = $('#uploadImage');
-	uploadImage.attr('src' , $('#printscreen_img')[0].toDataURL("image/png"));
-	console.log('listo');
 }
