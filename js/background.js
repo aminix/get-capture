@@ -49,15 +49,10 @@ function getImageURL() {
 						file : "js/content_script.js"
 					});
 
-					/*chrome.tabs.query({active: true}, function(tab2) {*/
-					/*chrome.tabs.captureVisibleTab(null, function(img) {*/
 					chrome.tabs.sendMessage(tab.id, {
 						code : 'image',
 						greeting : img
 					});
-					/*});*/
-					/*});*/
-
 				}
 			});
 
