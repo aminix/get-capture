@@ -16,6 +16,10 @@ var stepNumber = -1;
 var naturalHeight;
 var naturalWidth;
 
+var strokeStyle = 'black';
+var fillStyle = 'black';
+var	lineWidth = 1;
+
 $(document).ready(function() {
 	init();
 });
@@ -130,16 +134,19 @@ function setButtonEventListener() {
 	
 	var colorSelector = $('#colorPicker');
 	colorSelector.change(function(event) {
+		strokeStyle = colorSelector.val();
 		context.strokeStyle = colorSelector.val();
 	});
 	
 	var colorPickerFill = $('#colorPickerFill');
 	colorPickerFill.change(function(event) {
+		fillStyle = colorPickerFill.val();
 		context.fillStyle = colorPickerFill.val();
 	});
 	
 	var sizeSelector = $('#sizeSelect');
 	sizeSelector.change(function(event) {
+		lineWidth = sizeSelector.val();
 		context.lineWidth = sizeSelector.val();
 	});
 
@@ -231,6 +238,9 @@ function resize(width, height) {
 	img.onload = function (){
 		context.drawImage(img, 0, 0, width, height);
 		img_update();
+		context.lineWidth = lineWidth;
+		context.fillStyle = fillStyle;
+		context.strokeStyle = strokeStyle;
 	};
 }
 
