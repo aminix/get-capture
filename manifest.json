@@ -9,29 +9,29 @@
 	"commands": {
 		"open-editor": {
 			"suggested_key": {
-				"default": "Ctrl+Shift+D"
+				"default": "Alt+Z"
 			},
 			"description": "Open the editor"
 		},
 		"select-area": {
 			"suggested_key": {
-				"default": "Ctrl+Shift+M"
+				"default": "Alt+X"
 			},
 			"description": "Select area"
 		},
 		"visible-image": {
 			"suggested_key": {
-				"default": "Ctrl+Shift+B"
+				"default": "Alt+C"
 			},
 			"description": "Capture the visible image"
 		},
 		"full-image": {
 			"suggested_key": {
-				"default": "Ctrl+Shift+O",
-				"mac": "MacCtrl+Shift+O"
+				"default": "Alt+V"
 			},
 			"description": "Capture full image"
 		}
+
 	},
 		"icons": {
 		"16": "img/icon16.png",
