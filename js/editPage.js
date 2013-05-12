@@ -118,13 +118,13 @@ function setButtonEventListener() {
 	
 	$("#setResizeButton").click(function() {
 		resize($('#newWidthInput').val(), $('#newHeightInput').val());
-		$("#newWidthInput").val(naturalWidth);
-		$("#newHeightInput").val(naturalHeight);
 		return false;
 	});
 	
 	$("#setResetsButton").click(function() {
 		resize(naturalWidth, naturalHeight);
+		$("#newWidthInput").val(naturalWidth);
+		$("#newHeightInput").val(naturalHeight);
 		return false;
 	});
 	
