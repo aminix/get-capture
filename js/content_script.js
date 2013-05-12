@@ -14,30 +14,22 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 		}
 		imgURL = request.greeting;
 		$('#easyCaptureTarget').attr('src', imgURL);
-		if (!ias) {
-			debugger;
+		if (!ias) { debugger;
 			$('body').append($('<div id="imageAreaSelect" />'));
 			ias = $('#easyCaptureTarget').imgAreaSelect({
 				instance : true,
 				handles : true,
-				x1: 0,
-				y2: 0,
-				x2: 200,
-				y2: 200,
+				x1 : 0,
+				y2 : 0,
+				x2 : 200,
+				y2 : 200,
 				onSelectEnd : getSelectedImage,
 				parent : '#imageAreaSelect'
 			});
 		}
 		$('body').on('keydown', escapeListener);
 	} else {
-		var canvas = $('body').html2canvas({
-			proxy : '',
-			onrendered : function(canvas) {
-				var img = canvas.toDataURL()
-			  sendResponse({farewell: img});
-			},
-		});
-
+		getFullImage();
 	}
 	return true;
 });
@@ -88,4 +80,46 @@ function initialiseModal() {
 
 			return method;
 		}());
+}
+
+function getFullImage() {
+		console.log('window ' + $(window).height());
+		console.log('document ' + $(document).height());
+		console.log('window offset ' + $(window).scrollTop());
+
+		var documentHeight = $(document).height();
+		var documentWidht = $(document).width();
+		var screenHeight = $(window).height();
+		var screenWidth = $(window).width();
+		var captureVisibleTimes = Math.floor(documentHeight / screenHeight);
+		var lastCaptureSize = documentHeight - screenHeight * captureVisibleTimes;
+
+		var i;
+		var currentTop = 0;
+		var currentLeft = 0;
+		var arrayImages = [];
+		
+		for ( i = 0; i < captureVisibleTimes; i++) {
+			window.scrollTo(currentLeft, currentTop);
+			chrome.tabs.getSelected(null, function(tab) {
+				chrome.tabs.captureVisibleTab(null, function(img) {
+					arrayImages.push({
+						top: currentTop,
+						left: currentLeft,
+						img: img
+					})
+				});
+			});
+		}
+		var fullCanvas = $('<canvas style="display:none" id="easyCaptureCanvas" />');
+		$(document).append(fullCanvas);
+		fullCanvas.height = documentHeight;
+		fullCanvas.width = documentWidth;
+		
+		arrayImages.forEach(function(img) {
+			fullCanvas.drawImage(img.img, img,left, img.top);
+		});
+		window.open(fullCanvas.toDataURL());
+
+	
 }
