@@ -57,7 +57,7 @@ function getSelectedImage(img, selection) {
 	$ctx.drawImage(document.getElementById('easyCaptureTarget'), selection.x1, selection.y1, selection.width, selection.height, 0, 0, selection.width, selection.height);
 	$imageJPG = document.getElementById('easyCaptureCanvas').toDataURL('image/jpeg');
 	chrome.extension.sendMessage({
-		console.log('setea imagen');
+/*		console.log('setea imagen');*/
 		type: 'set-image',
 		imageJPG : $imageJPG
 	});

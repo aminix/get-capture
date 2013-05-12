@@ -9,13 +9,13 @@
 	"commands": {
 		"open-editor": {
 			"suggested_key": {
-				"default": "Ctrl+Shift+M"
+				"default": "Ctrl+Shift+D"
 			},
 			"description": "Open the editor"
 		},
 		"select-area": {
 			"suggested_key": {
-				"default": "Ctrl+Shift+D"
+				"default": "Ctrl+Shift+M"
 			},
 			"description": "Select area"
 		},
@@ -25,17 +25,19 @@
 			},
 			"description": "Capture the visible image"
 		},
-		"_execute_browser_action": {
+		"full-image": {
 			"suggested_key": {
 				"default": "Ctrl+Shift+O",
 				"mac": "MacCtrl+Shift+O"
-			}
+			},
+			"description": "Capture full image"
 		}
 	},
 	"content_scripts": [
 		{
 			"matches": ["<all_urls>"],
-			"js": ["js/content_script.js", "js/html2canvas.js", "js/vendor/jquery-1.9.1.min.js", "js/jquery.plugin.html2canvas.js"]
+			"js": [ "js/vendor/jquery-1.9.1.min.js", "js/content_script.js", "js/vendor/jquery.imgareaselect.pack.js"],
+			"css": ["css/modal.css", "css/imgareaselect/imgareaselect-default.css"]
 		}
 	],
 	"browser_action": {
