@@ -138,7 +138,13 @@ function setButtonEventListener() {
 		window.print();
 		return false;
 	});
-
+	
+	$("#facebookOption").click(function() {
+		$('.facebookForm').removeClass('hidenClass');
+		$('.facebookForm').addClass('showClass');
+		$('#facebookMessage').focus();
+	});
+	$('#closeModalButton').click(closeShareModal);
 	saveFunctionality();
 
 	$('#setDrawButton').click('click', trackButton);
@@ -452,6 +458,7 @@ function onFacebookLogin() {
 		for (var i = 0; i < tabs.length; i++) {
 			if (tabs[i].url.indexOf("http://www.facebook.com/connect/login_success.html") == 0) {
 				var params = tabs[i].url.split('#')[1];
+				chrome.tabs.remove(tabs[i].id);
 				localStorage.accessToken = params;
 				chrome.tabs.onUpdated.removeListener(onFacebookLogin);
 				publishImage();
@@ -460,6 +467,12 @@ function onFacebookLogin() {
 		}
 
 	});
+
+}
+
+function closeShareModal(){
+	$('#facebookMessage').val('');
+	$('#shareModal').modal('hide');
 
 }
 
@@ -480,8 +493,10 @@ function publishImage() { image
 	var oBlob = new Blob([ia], {
 		type : "image/png"
 	});
+	var message = $('#facebookMessage').val();
+	console.log('message es: ' + message);
 	formData.append("source", oBlob, 'screenshot.png');
-
+	formData.append("message" , message);
 	var url = 'https://graph.facebook.com/me/photos?' + localStorage["accessToken"];
 
 	$.ajax({
@@ -493,8 +508,8 @@ function publishImage() { image
 		type : 'POST',
 
 		success : function(data) {
-			alert("POST SUCCESSFUL");
+		//	alert("POST SUCCESSFUL");
 		}
 	});
-
+	closeShareModal();
 }
