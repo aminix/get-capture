@@ -6,17 +6,45 @@
 		"persistent": false,
 		"scripts": ["js/background.js"]
 	},
-	"content_scripts": [
-		{
-			"matches": ["<all_urls>"],
-			"js": ["js/content_script.js", "js/html2canvas.js", "js/vendor/jquery-1.9.1.min.js", "js/jquery.plugin.html2canvas.js"]
+	"commands": {
+		"open-editor": {
+			"suggested_key": {
+				"default": "Alt+Z"
+			},
+			"description": "Open the editor"
+		},
+		"select-area": {
+			"suggested_key": {
+				"default": "Alt+X"
+			},
+			"description": "Select area"
+		},
+		"visible-image": {
+			"suggested_key": {
+				"default": "Alt+C"
+			},
+			"description": "Capture the visible image"
+		},
+		"full-image": {
+			"suggested_key": {
+				"default": "Alt+V"
+			},
+			"description": "Capture full image"
 		}
-	],
-	"icons": {
+
+	},
+		"icons": {
 		"16": "img/icon16.png",
 		"48": "img/icon48.png",
 		"128": "img/icon.png"
 	},
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": [ "js/vendor/jquery-1.9.1.min.js", "js/content_script.js", "js/vendor/jquery.imgareaselect.pack.js"],
+			"css": ["css/modal.css", "css/imgareaselect/imgareaselect-default.css"]
+		}
+	],
 	"browser_action": {
 		"default_icon": "img/icon.png",
 		"default_title": "Shoot!",
