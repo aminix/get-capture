@@ -40,16 +40,16 @@
 
 							<a href="#" class="btn btn-small btn-block span6" id="stepForwardButton"> <img src="img/editorIcons/redo.png" > </a>
 						</div>
-						
+
 						<div class="row">
 							<label id="widthLabel" class="span6 label" for="newWidthInput">Width</label>
-							<label id="heightLabel" class="span6 label" for="newHeightInput">Height</label> 
+							<label id="heightLabel" class="span6 label" for="newHeightInput">Height</label>
 						</div>
 						<div class="row">
 							<input type="number" class="btn-small span6" id="newWidthInput">
 							<input type="number" class="btn-small span6" id="newHeightInput">
 						</div>
-						
+
 						<div class="row">
 							<a href="#" class="btn btn-small span6" id="setResizeButton"> Accept </a>
 							<a href="#" class="btn btn-small span6" id="setResetsButton"> Reset </a>
@@ -73,17 +73,41 @@
 					<div id="options" class="row">
 						<a class="btn btn-success popupButton btn-block" id="printEditor" >Print Image</a>
 						<a class="btn btn-success popupButton btn-block" id="saveImage" >Download</a>
+						<a class="btn btn-warning popupButton btn-block" data-toggle="modal" data-target="#shareModal">Share!</a>
 					</div>
 
 				</div>
 				<div>
 					<div id="container" class="span8">
-						<canvas id="printscreen_img"></canvas>
+						<canvas name="canvas" id="printscreen_img"></canvas>
 					</div>
 				</div>
 
 			</div>
 		</div>
 
+		<!-- Code for modal -->
+
+		<div id="shareModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+			<div class="modal-body">
+				<p>
+					Share your image with your friends!
+				</p>
+				<a class="btn btn-warning " id="facebookOption" >Facebook</a>
+				<p class="hideClass facebookForm" id="facebookText">
+					Message:
+				</p>
+				<textarea class="hideClass facebookForm" id="facebookMessage"></textarea>
+				<a  target="_blank"
+				href="https://www.facebook.com/dialog/oauth?client_id=109557755915113&response_type=token&scope=publish_actions user_photos publish_stream&redirect_uri=http://www.facebook.com/connect/login_success.html"
+				class="btn-small hideClass facebookForm" id="facebookConnect"> Share </a>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" id="closeModalButton" >
+					Close
+				</button>
+			</div>
+		</div>
 	</body>
 </html>

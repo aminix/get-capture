@@ -88,3 +88,20 @@ background-color: #eee !important;
 #setResetsButton {
 	margin-top: -10px;
 }
+
+#facebookMessage {
+	width: 80%;
+}
+
+#facebookText{
+	margin-top: 2%;
+}
+
+.hideClass{
+	display: none;
+}
+
+.showClass{
+	display: block;
+}
+
