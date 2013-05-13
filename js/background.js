@@ -109,23 +109,36 @@ function extractImage() {
 	window.open(localStorage["imageJPG"]);
 }
 
+function captureTabImage(sendResponse){
+	console.log('en background');
+	chrome.tabs.getSelected(null, function(tab) {
+		chrome.tabs.captureVisibleTab(null, function(img) {
+			console.log('background va a mandar');
+			sendResponse({img: img});
+		});
+	});
+}
+
 var commands = {
 	"open-editor" : openEdit,
 	"select-area" : getImageURL,
 	"visible-image" : captureVisibleTabOnly,
 	"full-image" : fullimage,
 	"extract-image" : extractImage,
-	"set-image" : function(request) {
+	"set-image" : function(request, sendResponse) {
 		localStorage["imageJPG"] = request.imageJPG;
+	},
+	"capture-tab-image" : function(request, sendResponse) {
+		captureTabImage(sendResponse);
 	}
 };
 
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	var command = commands[request.type];
 	if (command) {
-		command(request);
+		command(request, sendResponse);
 	}
-
+	return true;
 });
 
 chrome.commands.onCommand.addListener(function(command) {
