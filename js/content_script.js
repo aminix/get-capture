@@ -4,6 +4,7 @@ var firstTime, canvas, modal, image, ias;
 
 //When the user clicks Take Shot
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+	console.log('message')
 	if (request.code === 'image') {
 		if ( typeof firstTime === 'undefined') {
 			initialiseModal();
@@ -13,7 +14,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 		}
 		imgURL = request.greeting;
 		$('#easyCaptureTarget').attr('src', imgURL);
-		if (!ias) { debugger;
+		if (!ias) { ;
 			$('body').append($('<div id="imageAreaSelect" />'));
 			ias = $('#easyCaptureTarget').imgAreaSelect({
 				instance : true,
@@ -27,8 +28,31 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 			});
 		}
 		$('body').on('keydown', escapeListener);
+	} else if (request.code === 'fullImage') {
+		window.open(request.imagen);
 	} else {
-		getFullImage();
+		if ($(document).height() == $(window).height() && $(document).width() == $(window).width()) {
+			console.log('return')
+			chrome.runtime.sendMessage({
+				type : 'visible-image',
+			});
+			return;
+		}
+
+		$(window).on('scroll', function(event) {
+			if (document.body.scrollTop === 0) {
+				$(window).off('scroll');
+				chrome.runtime.sendMessage({
+					type: 'build-full-image',
+					documentHeight:  $(document).height(),
+					documentWidth:  $(document).width()
+				});
+				getFullImage();
+			}
+		});
+		window.scrollTo($(document).width(), $(document).height());
+		window.scrollTo(0, 0);
+
 	}
 	return true;
 });
@@ -83,9 +107,6 @@ function initialiseModal() {
 }
 
 function getFullImage() {
-	console.log('window ' + $(window).height());
-	console.log('document ' + $(document).height());
-	console.log('window offset ' + $(window).scrollTop());
 
 	var documentHeight = $(document).height();
 	var documentWidth = $(document).width();
@@ -102,7 +123,6 @@ function getFullImage() {
 	var arrayImages = [];
 
 	for ( i = 0; i < captureVisibleTimesY; i++) {
-		console.log('for en i: ' + i);
 		currentTop = i * screenHeight;
 
 		for ( k = 0; k < captureVisibleTimesX; k++) {
@@ -114,7 +134,8 @@ function getFullImage() {
 				offsetTop : 0,
 				offsetLeft : 0,
 				height : screenHeight,
-				width : screenWidth
+				width : screenWidth,
+				corner : ''
 			});
 
 		}
@@ -126,12 +147,13 @@ function getFullImage() {
 			currentLeft = k * screenWidth;
 
 			arrayImages.push({
-				top : documentHeight,
+				top : documentHeight - lastCaptureSizeY,
 				left : currentLeft,
 				offsetTop : lastCaptureSizeY,
 				offsetLeft : 0,
 				height : screenHeight,
-				width : screenWidth
+				width : screenWidth,
+				corner : 'top'
 			});
 		}
 	}
@@ -143,11 +165,12 @@ function getFullImage() {
 
 			arrayImages.push({
 				top : currentTop,
-				left : documentWidth,
+				left : documentWidth - lastCaptureSizeX,
 				offsetTop : 0,
 				offsetLeft : lastCaptureSizeX,
 				height : screenHeight,
-				width : screenWidth
+				width : screenWidth,
+				corner : 'left'
 			});
 		}
 	}
@@ -155,34 +178,48 @@ function getFullImage() {
 	// Corner case (top & left)
 	if (documentHeight % screenHeight !== 0 && documentWidth % screenWidth !== 0) {
 		arrayImages.push({
-			top : documentHeight,
-			left : documentWidth,
+			top : documentHeight - lastCaptureSizeY,
+			left : documentWidth - lastCaptureSizeX,
 			offsetTop : lastCaptureSizeY,
 			offsetLeft : lastCaptureSizeX,
 			height : screenHeight,
-			width : screenWidth
+			width : screenWidth,
+			corner : 'both'
 		});
 	}
 
 	// TODO Handle special border case
 
-	var captures = [];
+//	var captures = [];
 	function dequeue() {
+		console.log('dequeue');
 		if (arrayImages.length) {
 			var where = arrayImages.pop();
+			var lastOne = false;
+			if (!arrayImages.length){
+				lastOne = true;
+			}
+			$(window).on('scroll', function(event) {
+
+				$(window).off('scroll');
+				setTimeout(function() {
+					console.log('manda imagen');
+					chrome.runtime.sendMessage({
+						type : 'capture-tab-image',
+						where: where,
+						lastOne: lastOne
+					}, function(response) {
+					//	captures.push([response.img, where]);
+						if(response.ok == 'ok'){
+							dequeue();
+						}
+						
+					});
+				}, 250);
+			})
 			window.scrollTo(where.left, where.top);
-			chrome.runtime.sendMessage({
-				type : 'capture-tab-image',
-				what : JSON.stringify(where)
-			}, function(response) {
-				captures.push(response.img);
-				dequeue();
-			});
-		} else {
-			captures.forEach(function(capture) {
-				window.open(capture);
-			});
 		}
+
 	}
 
 	dequeue();

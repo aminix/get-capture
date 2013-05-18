@@ -465,7 +465,7 @@ function onFacebookLogin() {
 chrome.tabs.onUpdated.addListener(onFacebookLogin);
 
 function publishImage() { image
-	var image = localStorage["imageJPG"];
+	var image = canvaso.toDataURL();
 	var encodedPng = image.split(',')[1];
 	encodedPng = atob(encodedPng);
 	
