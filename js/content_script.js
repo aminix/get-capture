@@ -12,31 +12,39 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 			firstTime = true;
 		}
 		imgURL = request.greeting;
-		console.log('imgURL: ' + imgURL);
 		$('#easyCaptureTarget').attr('src', imgURL);
-		if (!ias) {
-			debugger;
+		if (!ias) { ;
 			$('body').append($('<div id="imageAreaSelect" />'));
 			ias = $('#easyCaptureTarget').imgAreaSelect({
 				instance : true,
 				handles : true,
-				x1: 0,
-				y2: 0,
-				x2: 200,
-				y2: 200,
+				x1 : 0,
+				y2 : 0,
+				x2 : 200,
+				y2 : 200,
 				onSelectEnd : getSelectedImage,
 				parent : '#imageAreaSelect'
 			});
 		}
 		$('body').on('keydown', escapeListener);
+	} else if (request.code === 'fullImage') {
+		window.open(request.imagen);
 	} else {
-		var canvas = $('body').html2canvas({
-			proxy : '',
-			onrendered : function(canvas) {
-				var img = canvas.toDataURL()
-			  sendResponse({farewell: img});
-			},
+		if ($(document).height() == $(window).height() && $(document).width() == $(window).width()) {
+			chrome.runtime.sendMessage({
+				type : 'visible-image',
+			});
+			return;
+		}
+
+		$(window).on('scroll', function(event) {
+			if (document.body.scrollTop === 0) {
+				$(window).off('scroll');
+				getFullImage();
+			}
 		});
+		window.scrollTo($(document).width(), $(document).height());
+		window.scrollTo(0, 0);
 
 	}
 	return true;
@@ -58,10 +66,9 @@ function getSelectedImage(img, selection) {
 	document.getElementById("easyCaptureCanvas").width = selection.width;
 	$ctx = document.getElementById('easyCaptureCanvas').getContext("2d");
 	$ctx.drawImage(document.getElementById('easyCaptureTarget'), selection.x1, selection.y1, selection.width, selection.height, 0, 0, selection.width, selection.height);
-	$imageJPG = document.getElementById('easyCaptureCanvas').toDataURL('image/jpeg');
+	$imageJPG = document.getElementById('easyCaptureCanvas').toDataURL('image/png');
 	chrome.extension.sendMessage({
-/*		console.log('setea imagen');*/
-		type: 'set-image',
+		type : 'set-image',
 		imageJPG : $imageJPG
 	});
 }
@@ -90,4 +97,122 @@ function initialiseModal() {
 
 			return method;
 		}());
+}
+
+function getFullImage() {
+
+	var documentHeight = $(document).height();
+	var documentWidth = $(document).width();
+	var screenHeight = $(window).height();
+	var screenWidth = $(window).width();
+	var captureVisibleTimesY = Math.floor(documentHeight / screenHeight);
+	var captureVisibleTimesX = Math.floor(documentWidth / screenWidth);
+	var lastCaptureSizeY = documentHeight - screenHeight * captureVisibleTimesY;
+	var lastCaptureSizeX = documentWidth - screenWidth * captureVisibleTimesX;
+
+	var i;
+	var k;
+	var currentTop = 0, currentLeft = 0, currentWidth = 0, currentHeight = 0;
+	var arrayImages = [];
+
+	for ( i = 0; i < captureVisibleTimesY; i++) {
+		currentTop = i * screenHeight;
+
+		for ( k = 0; k < captureVisibleTimesX; k++) {
+			currentLeft = k * screenWidth;
+
+			arrayImages.push({
+				top : currentTop,
+				left : currentLeft,
+				offsetTop : 0,
+				offsetLeft : 0,
+				height : screenHeight,
+				width : screenWidth,
+				corner : ''
+			});
+
+		}
+	}
+
+	// Corner cases (top)
+	if (documentHeight % screenHeight !== 0) {
+		for ( k = 0; k < captureVisibleTimesX; k++) {
+			currentLeft = k * screenWidth;
+
+			arrayImages.push({
+				top : documentHeight - lastCaptureSizeY,
+				left : currentLeft,
+				offsetTop : lastCaptureSizeY,
+				offsetLeft : 0,
+				height : screenHeight,
+				width : screenWidth,
+				corner : 'top'
+			});
+		}
+	}
+
+	// Corner cases (left)
+	if (documentWidth % screenWidth !== 0) {
+		for ( k = 0; k < captureVisibleTimesY; k++) {
+			currentTop = k * screenHeight;
+
+			arrayImages.push({
+				top : currentTop,
+				left : documentWidth - lastCaptureSizeX,
+				offsetTop : 0,
+				offsetLeft : lastCaptureSizeX,
+				height : screenHeight,
+				width : screenWidth,
+				corner : 'left'
+			});
+		}
+	}
+
+	// Corner case (top & left)
+	if (documentHeight % screenHeight !== 0 && documentWidth % screenWidth !== 0) {
+		arrayImages.push({
+			top : documentHeight - lastCaptureSizeY,
+			left : documentWidth - lastCaptureSizeX,
+			offsetTop : lastCaptureSizeY,
+			offsetLeft : lastCaptureSizeX,
+			height : screenHeight,
+			width : screenWidth,
+			corner : 'both'
+		});
+	}
+
+	function dequeue() {
+		if (arrayImages.length) {
+			var where = arrayImages.pop();
+
+			$(window).on('scroll', function(event) {
+
+				$(window).off('scroll');
+				setTimeout(function() {
+					chrome.runtime.sendMessage({
+						type : 'capture-tab-image',
+						where: where
+					}, function(response) {
+						if(response.ok == 'ok'){
+							dequeue();
+						}
+						
+					});
+				}, 100);
+			})
+			window.scrollTo(where.left, where.top);
+		} else {
+	
+			chrome.runtime.sendMessage({
+				type : 'build-full-image',
+				documentHeight : documentHeight,
+				documentWidth : documentWidth
+			}, function(response) {
+			});
+		}
+
+	}
+
+	dequeue();
+
 }
