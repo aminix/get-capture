@@ -1,3 +1,13 @@
+!function(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+	if (!d.getElementById(id)) {
+		js = d.createElement(s);
+		js.id = id;
+		js.src = p + '://platform.twitter.com/widgets.js';
+		fjs.parentNode.insertBefore(js, fjs);
+	}
+}(document, 'script', 'twitter-wjs');
+
 var ESCAPE_KEY = 27;
 var RETURN_KEY = 13;
 
@@ -17,7 +27,7 @@ var naturalWidth;
 
 var strokeStyle = 'black';
 var fillStyle = 'black';
-var	lineWidth = 1;
+var lineWidth = 1;
 
 $(document).ready(function() {
 	init();
@@ -165,7 +175,7 @@ function setButtonEventListener() {
 		window.print();
 		return false;
 	});
-	
+
 	$("#facebookOption").click(function() {
 		$('.facebookForm').removeClass('hidenClass');
 		$('.facebookForm').addClass('showClass');
@@ -173,8 +183,8 @@ function setButtonEventListener() {
 	});
 	$('#closeModalButton').click(closeShareModal);
 	saveFunctionality();
-	
-	$('a.share').click(function (e) {
+
+	$('a.share').click(function(e) {
 		$('#facebookMessage').val('');
 		$('.facebookForm').addClass('hidenClass');
 		$('.facebookForm').removeClass('showClass');
@@ -566,7 +576,6 @@ function saveFunctionality() {
 
 }
 
-
 function onFacebookLogin() {
 	chrome.tabs.getAllInWindow(null, function(tabs) {
 		for (var i = 0; i < tabs.length; i++) {
@@ -585,7 +594,7 @@ function onFacebookLogin() {
 
 }
 
-function closeShareModal(){
+function closeShareModal() {
 	$('#facebookMessage').val('');
 	$('#shareModal').modal('hide');
 }
@@ -613,7 +622,7 @@ function publishImage() {
 	var formData = new FormData();
 	var message = $('#facebookMessage').val();
 	formData.append("source", oBlob, 'screenshot.png');
-	formData.append("message" , message);
+	formData.append("message", message);
 	var url = 'https://graph.facebook.com/me/photos?' + localStorage["accessToken"];
 
 	$.ajax({
@@ -625,7 +634,7 @@ function publishImage() {
 		type : 'POST',
 
 		success : function(data) {
-		//	alert("POST SUCCESSFUL");
+			//	alert("POST SUCCESSFUL");
 		}
 	});
 	closeShareModal();
