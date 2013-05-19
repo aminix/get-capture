@@ -88,7 +88,6 @@ function extractImage() {
 }
 
 function captureTabImage(request, sendResponse) {
-	console.log('capture ', request)
 	chrome.tabs.captureVisibleTab(null, {
 		format : "png"
 	}, function(img) {
@@ -124,7 +123,6 @@ function errorHandler(e) {
 			break;
 	};
 
-	console.log('Error: ' + msg);
 }
 
 function createWriteImage(fileEntry, img, callback) {
@@ -144,9 +142,8 @@ function createWriteImage(fileEntry, img, callback) {
 }
 
 function writeToFile(fileName, fullCanvasToURL, callback) {
-	webkitStorageInfo.requestQuota(webkitStorageInfo.TEMPORARY, 100 * 1024 * 1024, function(freeBytes) {
+	webkitStorageInfo.requestQuota(webkitStorageInfo.TEMPORARY, 30 * 1024 * 1024, function(freeBytes) {
 		window.webkitRequestFileSystem(webkitStorageInfo.TEMPORARY, freeBytes, function(fs) {
-
 			fs.root.getFile(fileName, {
 				create : false
 			}, function(fileEntry) {
@@ -181,19 +178,14 @@ function writeToFile(fileName, fullCanvasToURL, callback) {
 
 		}, errorHandler);
 	}, errorHandler);
-	console.log('ultimo')
-	//		window.open(fullCanvas[0].toDataURL())
-	//	localStorage["imageJPG"] = fullCanvas[0].toDataURL('image/png');
-
-	//		window.open(fullCanvas[0].toDataURL());
-	return;
 }
 
 function copyToCanvas(ctx, fullCanvas) {
-	console.log('entra a copy to canvas')
 	if (!captures.length) {
 		writeToFile('test', fullCanvas[0].toDataURL('image/png'), openEdit);
+		return;
 	}
+
 
 	var item = captures.pop();
 	var imageSrc = item[0];
@@ -202,15 +194,6 @@ function copyToCanvas(ctx, fullCanvas) {
 	fullImageCanvas.src = imageSrc;
 	fullImageCanvas.onload = function(event) {
 
-		console.log('sx ', imageInfo.offsetLeft);
-		console.log('sy ', imageInfo.offsetTop);
-		console.log('swidth ', imageInfo.width - imageInfo.offsetLeft);
-		console.log('sheight ', imageInfo.height - imageInfo.offsetTop);
-		console.log('x ', imageInfo.left);
-		console.log('y ', imageInfo.top);
-		console.log('width ', imageInfo.width - imageInfo.offsetLeft);
-		console.log('height ', imageInfo.height - imageInfo.offsetTop);
-
 		if (imageInfo.corner == '') {
 
 			ctx.drawImage(fullImageCanvas, imageInfo.offsetLeft, imageInfo.offsetTop, imageInfo.width - imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop, imageInfo.left, imageInfo.top, imageInfo.width - imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop);
@@ -218,19 +201,15 @@ function copyToCanvas(ctx, fullCanvas) {
 		} else if (imageInfo.corner == 'top') {
 			ctx.drawImage(fullImageCanvas, imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop, imageInfo.width - imageInfo.offsetLeft, imageInfo.offsetTop, imageInfo.left, imageInfo.top, imageInfo.width - imageInfo.offsetLeft, imageInfo.offsetTop);
 		} else if (imageInfo.corner == 'left') {
-			console.log('corner es');
 			ctx.drawImage(fullImageCanvas, imageInfo.width - imageInfo.offsetLeft, imageInfo.offsetTop, imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop, imageInfo.left, imageInfo.top, imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop);
 		} else {
-			console.log('corner es');
-			//		ctx.drawImage(fullImageCanvas, imageInfo.width -imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop,  imageInfo.offsetLeft,  imageInfo.offsetTop, imageInfo.left, imageInfo.top, imageInfo.offsetLeft, imageInfo.offsetTop);
+			ctx.drawImage(fullImageCanvas, imageInfo.width -imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop,  imageInfo.offsetLeft,  imageInfo.offsetTop, imageInfo.left, imageInfo.top, imageInfo.offsetLeft, imageInfo.offsetTop);
 		}
 		copyToCanvas(ctx, fullCanvas);
 	}
 }
 
 function buildFullImage(request) {
-	//	captures = request.captures;
-	//.reverse();
 	var fullCanvas = $('<canvas style="display:none" id="easyCaptureFullCanvas" />');
 	$('body').append(fullCanvas);
 	fullCanvas.height(request.documentHeight);
@@ -239,10 +218,7 @@ function buildFullImage(request) {
 	var ctx = fullCanvas[0].getContext("2d");
 	ctx.canvas.width = request.documentWidth;
 	ctx.canvas.height = request.documentHeight;
-	/*while (captures.length) {*/
 	copyToCanvas(ctx, fullCanvas);
-	/*}*/
-	console.log('dibujo ');
 }
 
 function startFullImage(request) {
@@ -251,7 +227,6 @@ function startFullImage(request) {
 	var ctx = fullCanvas[0].getContext("2d");
 	ctx.canvas.width = request.documentWidth;
 	ctx.canvas.height = request.documentHeight;
-	console.log('creo canvas ');
 }
 
 var commands = {
@@ -264,11 +239,9 @@ var commands = {
 		writeToFile('test', request.imageJPG);
 	},
 	"capture-tab-image" : function(request, sendResponse) {
-		console.log('recibio msg')
 		captureTabImage(request, sendResponse);
 	},
 	"build-full-image" : function(request, sendResponse) {
-		//		startFullImage(request);
 		buildFullImage(request);
 	}
 };
@@ -282,8 +255,6 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 chrome.commands.onCommand.addListener(function(command) {
-	console.log(command);
-
 	var commandToCall = commands[command];
 	if (commandToCall) {
 		commandToCall();

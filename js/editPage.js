@@ -44,7 +44,7 @@ function init() {
 	var pastedImage = new Image();
 
 	function errorHandler(e) {
-		console.log('lala error IO' + e);
+		console.log('error IO' + e);
 	}
 
 
@@ -452,7 +452,7 @@ function saveFunctionality() {
 		}
 	});
 
-	var root = $('<div/>').append($('<div id="popoverContainer"/>').append($('<input type="text" placeholder="Filename to save" id="fileName"></input>'), $('<span>.jpeg</span>'), $('<a class="btn btn-small disabled" id="saveButton" >Save!</a>')));
+	var root = $('<div/>').append($('<div id="popoverContainer"/>').append($('<input type="text" placeholder="Filename to save" id="fileName"></input>'), $('<span>.png</span>'), $('<a class="btn btn-small disabled" id="saveButton" >Save!</a>')));
 	$('#saveImage').popover({
 		html : true,
 		content : root.html(),
@@ -460,13 +460,90 @@ function saveFunctionality() {
 
 	});
 
+	function errorHandler(e) {
+		var msg = '';
+
+		switch (e.code) {
+			case FileError.QUOTA_EXCEEDED_ERR:
+				msg = 'QUOTA_EXCEEDED_ERR';
+				break;
+			case FileError.NOT_FOUND_ERR:
+				msg = 'NOT_FOUND_ERR';
+				break;
+			case FileError.SECURITY_ERR:
+				msg = 'SECURITY_ERR';
+				break;
+			case FileError.INVALID_MODIFICATION_ERR:
+				msg = 'INVALID_MODIFICATION_ERR';
+				break;
+			case FileError.INVALID_STATE_ERR:
+				msg = 'INVALID_STATE_ERR';
+				break;
+			default:
+				msg = 'Unknown Error';
+				break;
+		};
+
+	}
+
+	function saveImageTodownload(fileEntry) {
+		return function saveToFS() {
+			fileEntry.createWriter(function(fileWriter) {
+				var blob = convertToBinaryImage($('#printscreen_img')[0]);
+				fileWriter.onwriteend = function() {
+					$('#saveButton').attr('href', fileEntry.toURL());
+					$('#fileName').removeAttr('disabled');
+					$('#fileName').focus();
+				};
+				fileWriter.write(blob);
+			}, errorHandler);
+		}
+	}
+
+
 	$('#saveImage').click(function() {
-		var data = $('#printscreen_img')[0].toDataURL("image/png");
-		$('#fileName').focus();
-		$('#saveButton').attr('href', data);
+		$('#fileName').attr('disabled', '');
+		webkitStorageInfo.requestQuota(webkitStorageInfo.TEMPORARY, 30 * 1024 * 1024, function(freeBytes) {
+			window.webkitRequestFileSystem(webkitStorageInfo.TEMPORARY, freeBytes, function(fs) {
+				fs.root.getFile('test.png', {
+					create : false
+				}, function(fileEntry) {
+					fileEntry.remove(function() {
+						fs.root.getFile('test.png', {
+							create : true
+						}, function(fileEntry) {
+							saveImageTodownload(fileEntry)();
+						}, errorHandler);
+					}, function(e) {
+						if (e.code === FileError.NOT_FOUND_ERR) {
+							fs.root.getFile('test.png', {
+								create : true
+							}, function(fileEntry) {
+								saveImageTodownload(fileEntry)();
+							}, errorHandler);
+						} else {
+							return errorHandler(e);
+						}
+					});
+				}, function(e) {
+					if (e.code === FileError.NOT_FOUND_ERR) {
+						fs.root.getFile('test.png', {
+							create : true
+						}, function(fileEntry) {
+							saveImageTodownload(fileEntry)();
+						}, errorHandler);
+					} else {
+						return errorHandler(e);
+					}
+				});
+
+			}, errorHandler);
+		}, errorHandler);
+
 	});
 
 }
+
 
 function onFacebookLogin() {
 	chrome.tabs.getAllInWindow(null, function(tabs) {
@@ -476,6 +553,7 @@ function onFacebookLogin() {
 				localStorage.accessToken = params;
 				chrome.tabs.onUpdated.removeListener(onFacebookLogin);
 				publishImage();
+				chrome.tabs.remove(tabs[i].id);
 				return;
 			}
 		}
@@ -486,8 +564,8 @@ function onFacebookLogin() {
 
 chrome.tabs.onUpdated.addListener(onFacebookLogin);
 
-function publishImage() { image
-	var image = canvaso.toDataURL();
+function convertToBinaryImage(canvas) {
+	var image = canvas.toDataURL();
 	var encodedPng = image.split(',')[1];
 	encodedPng = atob(encodedPng);
 
@@ -496,11 +574,16 @@ function publishImage() { image
 	for (var i = 0; i < encodedPng.length; i++) {
 		ia[i] = encodedPng.charCodeAt(i);
 	}
-
-	var formData = new FormData();
-	var oBlob = new Blob([ia], {
+	return oBlob = new Blob([ia], {
 		type : "image/png"
 	});
+
+}
+
+function publishImage() {
+
+	var oBlob = convertToBinaryImage(canvaso);
+	var formData = new FormData();
 	formData.append("source", oBlob, 'screenshot.png');
 
 	var url = 'https://graph.facebook.com/me/photos?' + localStorage["accessToken"];

@@ -4,7 +4,6 @@ var firstTime, canvas, modal, image, ias;
 
 //When the user clicks Take Shot
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
-	console.log('message')
 	if (request.code === 'image') {
 		if ( typeof firstTime === 'undefined') {
 			initialiseModal();
@@ -31,11 +30,7 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	} else if (request.code === 'fullImage') {
 		window.open(request.imagen);
 	} else {
-		console.log('returdddn');
-		console.log(' doc  wind height ' ,$(document).height(),  $(window).height() );
-		console.log(' doc  wind width ' ,$(document).width(),  $(window).width() );
 		if ($(document).height() == $(window).height() && $(document).width() == $(window).width()) {
-			console.log('return')
 			chrome.runtime.sendMessage({
 				type : 'visible-image',
 			});
@@ -106,10 +101,6 @@ function initialiseModal() {
 
 function getFullImage() {
 
-	console.log('window ' + $(window).height());
-	console.log('document ' + $(document).height());
-	console.log('window offset ' + $(window).scrollTop());
-
 	var documentHeight = $(document).height();
 	var documentWidth = $(document).width();
 	var screenHeight = $(window).height();
@@ -118,8 +109,6 @@ function getFullImage() {
 	var captureVisibleTimesX = Math.floor(documentWidth / screenWidth);
 	var lastCaptureSizeY = documentHeight - screenHeight * captureVisibleTimesY;
 	var lastCaptureSizeX = documentWidth - screenWidth * captureVisibleTimesX;
-
-	console.log('visible times X, Y : ' + captureVisibleTimesX + ', ' + captureVisibleTimesY)
 
 	var i;
 	var k;
@@ -192,11 +181,7 @@ function getFullImage() {
 		});
 	}
 
-	// TODO Handle special border case
-
-//	var captures = [];
 	function dequeue() {
-		console.log('dequeue');
 		if (arrayImages.length) {
 			var where = arrayImages.pop();
 
@@ -204,12 +189,10 @@ function getFullImage() {
 
 				$(window).off('scroll');
 				setTimeout(function() {
-					console.log('timeout');
 					chrome.runtime.sendMessage({
 						type : 'capture-tab-image',
 						where: where
 					}, function(response) {
-					//	captures.push([response.img, where]);
 						if(response.ok == 'ok'){
 							dequeue();
 						}
@@ -222,32 +205,14 @@ function getFullImage() {
 	
 			chrome.runtime.sendMessage({
 				type : 'build-full-image',
-		//		captures : captures,
 				documentHeight : documentHeight,
 				documentWidth : documentWidth
 			}, function(response) {
 			});
-
-			/*
-			 captures.forEach(function(capture) {
-			 window.open(capture);
-			 });*/
-
 		}
 
 	}
 
 	dequeue();
-
-	/*
-	 var fullCanvas = $('<canvas style="display:none" id="easyCaptureCanvas" />');
-	 $(document).append(fullCanvas);
-	 fullCanvas.height = documentHeight;
-	 fullCanvas.width = documentWidth;
-
-	 arrayImages.forEach(function(img) {
-	 fullCanvas.drawImage(img.img, img, left, img.top);
-	 });
-	 window.open(fullCanvas.toDataURL());*/
 
 }
