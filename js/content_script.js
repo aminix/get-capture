@@ -31,6 +31,9 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	} else if (request.code === 'fullImage') {
 		window.open(request.imagen);
 	} else {
+		console.log('returdddn');
+		console.log(' doc  wind height ' ,$(document).height(),  $(window).height() );
+		console.log(' doc  wind width ' ,$(document).width(),  $(window).width() );
 		if ($(document).height() == $(window).height() && $(document).width() == $(window).width()) {
 			console.log('return')
 			chrome.runtime.sendMessage({
@@ -42,11 +45,6 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 		$(window).on('scroll', function(event) {
 			if (document.body.scrollTop === 0) {
 				$(window).off('scroll');
-				chrome.runtime.sendMessage({
-					type: 'build-full-image',
-					documentHeight:  $(document).height(),
-					documentWidth:  $(document).width()
-				});
 				getFullImage();
 			}
 		});
@@ -73,7 +71,7 @@ function getSelectedImage(img, selection) {
 	document.getElementById("easyCaptureCanvas").width = selection.width;
 	$ctx = document.getElementById('easyCaptureCanvas').getContext("2d");
 	$ctx.drawImage(document.getElementById('easyCaptureTarget'), selection.x1, selection.y1, selection.width, selection.height, 0, 0, selection.width, selection.height);
-	$imageJPG = document.getElementById('easyCaptureCanvas').toDataURL('image/jpeg');
+	$imageJPG = document.getElementById('easyCaptureCanvas').toDataURL('image/png');
 	chrome.extension.sendMessage({
 		type : 'set-image',
 		imageJPG : $imageJPG
@@ -108,6 +106,10 @@ function initialiseModal() {
 
 function getFullImage() {
 
+	console.log('window ' + $(window).height());
+	console.log('document ' + $(document).height());
+	console.log('window offset ' + $(window).scrollTop());
+
 	var documentHeight = $(document).height();
 	var documentWidth = $(document).width();
 	var screenHeight = $(window).height();
@@ -116,6 +118,8 @@ function getFullImage() {
 	var captureVisibleTimesX = Math.floor(documentWidth / screenWidth);
 	var lastCaptureSizeY = documentHeight - screenHeight * captureVisibleTimesY;
 	var lastCaptureSizeX = documentWidth - screenWidth * captureVisibleTimesX;
+
+	console.log('visible times X, Y : ' + captureVisibleTimesX + ', ' + captureVisibleTimesY)
 
 	var i;
 	var k;
@@ -195,19 +199,15 @@ function getFullImage() {
 		console.log('dequeue');
 		if (arrayImages.length) {
 			var where = arrayImages.pop();
-			var lastOne = false;
-			if (!arrayImages.length){
-				lastOne = true;
-			}
+
 			$(window).on('scroll', function(event) {
 
 				$(window).off('scroll');
 				setTimeout(function() {
-					console.log('manda imagen');
+					console.log('timeout');
 					chrome.runtime.sendMessage({
 						type : 'capture-tab-image',
-						where: where,
-						lastOne: lastOne
+						where: where
 					}, function(response) {
 					//	captures.push([response.img, where]);
 						if(response.ok == 'ok'){
@@ -215,9 +215,24 @@ function getFullImage() {
 						}
 						
 					});
-				}, 250);
+				}, 100);
 			})
 			window.scrollTo(where.left, where.top);
+		} else {
+	
+			chrome.runtime.sendMessage({
+				type : 'build-full-image',
+		//		captures : captures,
+				documentHeight : documentHeight,
+				documentWidth : documentWidth
+			}, function(response) {
+			});
+
+			/*
+			 captures.forEach(function(capture) {
+			 window.open(capture);
+			 });*/
+
 		}
 
 	}

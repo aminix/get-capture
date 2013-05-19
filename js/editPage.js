@@ -42,22 +42,43 @@ function init() {
 	setButtonEventListener();
 
 	var pastedImage = new Image();
-	pastedImage.src = localStorage["imageJPG"];
-	setTimeout(function() {
-		naturalHeight = pastedImage.naturalHeight;
-		naturalWidth = pastedImage.naturalWidth;
-		canvas.height = naturalHeight;
-		canvas.width = naturalWidth;
-		canvaso.height = naturalHeight;
-		canvaso.width = naturalWidth;
-		
-		$("#newWidthInput").attr("value", naturalWidth);
-		$("#newHeightInput").attr("value", naturalHeight);
-		context.drawImage(pastedImage, 0, 0);
-		img_update();
-	}, 200);
 
-	toolChange(tool_default);
+	function errorHandler(e) {
+		console.log('lala error IO' + e);
+	}
+
+
+	window.webkitRequestFileSystem(webkitStorageInfo.TEMPORARY, 30 * 1024 * 1024, function(fs) {
+		fs.root.getFile('test', {}, function(fileEntry) {
+			fileEntry.file(function(file) {
+				var reader = new FileReader();
+
+				reader.onloadend = function(e) {
+					pastedImage.src = this.result;
+
+					setTimeout(function() {
+						naturalHeight = pastedImage.naturalHeight;
+						naturalWidth = pastedImage.naturalWidth;
+						canvas.height = naturalHeight;
+						canvas.width = naturalWidth;
+						canvaso.height = naturalHeight;
+						canvaso.width = naturalWidth;
+
+						$("#newWidthInput").attr("value", naturalWidth);
+						$("#newHeightInput").attr("value", naturalHeight);
+						context.drawImage(pastedImage, 0, 0);
+						img_update();
+					}, 200);
+
+					toolChange(tool_default);
+				};
+
+				reader.readAsText(file);
+			}, errorHandler);
+
+		}, errorHandler);
+	}, errorHandler);
+
 }
 
 function setButtonEventListener() {
@@ -105,19 +126,19 @@ function setButtonEventListener() {
 		stepForward();
 		return false;
 	});
-	
+
 	$("#setResizeButton").click(function() {
 		resize($('#newWidthInput').val(), $('#newHeightInput').val());
 		$("#newWidthInput").val(naturalWidth);
 		$("#newHeightInput").val(naturalHeight);
 		return false;
 	});
-	
+
 	$("#setResetsButton").click(function() {
 		resize(naturalWidth, naturalHeight);
 		return false;
 	});
-	
+
 	var colorSelector = $('#colorPicker');
 	colorSelector.change(function(event) {
 		context.strokeStyle = colorSelector.val();
@@ -209,6 +230,7 @@ function stepForward() {
 		}
 	}
 }
+
 function resize(width, height) {
 	var oldCanvas = canvaso.toDataURL("image/png");
 	var img = new Image();
@@ -217,7 +239,7 @@ function resize(width, height) {
 	canvaso.height = height;
 	canvas.width = width;
 	canvas.height = height;
-	img.onload = function (){
+	img.onload = function() {
 		context.drawImage(img, 0, 0, width, height);
 		img_update();
 	};
@@ -439,7 +461,7 @@ function saveFunctionality() {
 	});
 
 	$('#saveImage').click(function() {
-		var data = $('#printscreen_img')[0].toDataURL("image/jpeg");
+		var data = $('#printscreen_img')[0].toDataURL("image/png");
 		$('#fileName').focus();
 		$('#saveButton').attr('href', data);
 	});
@@ -449,7 +471,7 @@ function saveFunctionality() {
 function onFacebookLogin() {
 	chrome.tabs.getAllInWindow(null, function(tabs) {
 		for (var i = 0; i < tabs.length; i++) {
-			if (tabs[i].url.indexOf("http://www.facebook.com/connect/login_success.html") == 0) {
+			if (tabs[i].url.indexOf("http://www.facebook.com/connect/login_success.html") == 0 || tabs[i].url.indexOf("https://www.facebook.com/connect/login_success.html") == 0) {
 				var params = tabs[i].url.split('#')[1];
 				localStorage.accessToken = params;
 				chrome.tabs.onUpdated.removeListener(onFacebookLogin);
@@ -468,7 +490,7 @@ function publishImage() { image
 	var image = canvaso.toDataURL();
 	var encodedPng = image.split(',')[1];
 	encodedPng = atob(encodedPng);
-	
+
 	var ab = new ArrayBuffer(encodedPng.length);
 	var ia = new Uint8Array(ab);
 	for (var i = 0; i < encodedPng.length; i++) {

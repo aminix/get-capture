@@ -1,5 +1,5 @@
-//var captures = [];
-var fullCanvas;
+var captures = [];
+//var fullCanvas;
 
 chrome.manifest = chrome.app.getDetails();
 
@@ -41,22 +41,13 @@ function getImageURL() {
 	chrome.tabs.query({
 		active : true
 	}, function(tab) {
-		chrome.tabs.captureVisibleTab(null, function(img) {
+		chrome.tabs.captureVisibleTab(null, {
+			format : 'png'
+		}, function(img) {
 			tab = tab[0];
 			chrome.tabs.sendMessage(tab.id, {
 				code : 'image',
 				greeting : img
-			}, function(response) {
-				if (!response) {
-					chrome.tabs.executeScript(tab.id, {
-						file : "js/content_script.js"
-					});
-
-					chrome.tabs.sendMessage(tab.id, {
-						code : 'image',
-						greeting : img
-					});
-				}
 			});
 
 		});
@@ -75,9 +66,10 @@ function openEdit() {
 
 function captureVisibleTabOnly() {
 	chrome.tabs.getSelected(null, function(tab) {
-		chrome.tabs.captureVisibleTab(null, function(img) {
-			localStorage["imageJPG"] = img;
-			openEdit();
+		chrome.tabs.captureVisibleTab(null, {
+			format : 'png'
+		}, function(img) {
+			writeToFile('test', img, openEdit);
 		});
 	});
 
@@ -97,53 +89,112 @@ function extractImage() {
 
 function captureTabImage(request, sendResponse) {
 	console.log('capture ', request)
-	chrome.tabs.captureVisibleTab(null, function(img) {
-		debugger; 
-		console.log(img);
-		window.open(img);
-		//		captures.push([img, request.where]);
+	chrome.tabs.captureVisibleTab(null, {
+		format : "png"
+	}, function(img) {
+		captures.push([img, request.where]);
 		sendResponse({
 			ok : 'ok'
 		});
-		drawImage([img, request.where]);
-		if (request.lastOne == true) {
-			// open edit and delete canvas
-	//		window.open(fullCanvas[0].toDataURL());
-			localStorage["imageJPG"] = fullCanvas[0].toDataURL();
-			openEdit();
-			fullCanvas.remove();
-			fullCanvas = undefined;
-		}
+
 	});
 }
 
-function drawImage(capture) {
-	console.log('drawImage');
-	var ctx = fullCanvas[0].getContext("2d");
-	var imageSrc = capture[0];
-	var imageInfo = capture[1];
-	var fullImageCanvas = new Image();
-	fullImageCanvas.src = imageSrc;
-	fullImageCanvas.onload = function(event) {
-		if (imageInfo.corner == '') {
-			ctx.drawImage(fullImageCanvas, imageInfo.offsetLeft, imageInfo.offsetTop, imageInfo.width - imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop, imageInfo.left, imageInfo.top, imageInfo.width - imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop);
-		} else if (imageInfo.corner == 'top') {
-			ctx.drawImage(fullImageCanvas, imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop, imageInfo.width - imageInfo.offsetLeft, imageInfo.offsetTop, imageInfo.left, imageInfo.top, imageInfo.width - imageInfo.offsetLeft, imageInfo.offsetTop);
-		} else if (imageInfo.corner == 'left') {
-			ctx.drawImage(fullImageCanvas, imageInfo.width - imageInfo.offsetLeft, imageInfo.offsetTop, imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop, imageInfo.left, imageInfo.top, imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop);
-		} else {
-			console.log('corner es');
-			//		ctx.drawImage(fullImageCanvas, imageInfo.width -imageInfo.offsetLeft, imageInfo.height - imageInfo.offsetTop,  imageInfo.offsetLeft,  imageInfo.offsetTop, imageInfo.left, imageInfo.top, imageInfo.offsetLeft, imageInfo.offsetTop);
+function errorHandler(e) {
+	var msg = '';
 
-		}
+	switch (e.code) {
+		case FileError.QUOTA_EXCEEDED_ERR:
+			msg = 'QUOTA_EXCEEDED_ERR';
+			break;
+		case FileError.NOT_FOUND_ERR:
+			msg = 'NOT_FOUND_ERR';
+			break;
+		case FileError.SECURITY_ERR:
+			msg = 'SECURITY_ERR';
+			break;
+		case FileError.INVALID_MODIFICATION_ERR:
+			msg = 'INVALID_MODIFICATION_ERR';
+			break;
+		case FileError.INVALID_STATE_ERR:
+			msg = 'INVALID_STATE_ERR';
+			break;
+		default:
+			msg = 'Unknown Error';
+			break;
+	};
+
+	console.log('Error: ' + msg);
+}
+
+function createWriteImage(fileEntry, img, callback) {
+	return function writeImage() {
+		fileEntry.createWriter(function(fileWriter) {
+			var blob = new Blob([img]);
+
+			fileWriter.onwriteend = function() {
+				if (callback) {
+					callback();
+				}
+
+			};
+			fileWriter.write(blob);
+		}, errorHandler);
 	}
 }
 
+function writeToFile(fileName, fullCanvasToURL, callback) {
+	webkitStorageInfo.requestQuota(webkitStorageInfo.TEMPORARY, 100 * 1024 * 1024, function(freeBytes) {
+		window.webkitRequestFileSystem(webkitStorageInfo.TEMPORARY, freeBytes, function(fs) {
+
+			fs.root.getFile(fileName, {
+				create : false
+			}, function(fileEntry) {
+				fileEntry.remove(function() {
+					fs.root.getFile(fileName, {
+						create : true
+					}, function(fileEntry) {
+						createWriteImage(fileEntry, fullCanvasToURL, callback)();
+					}, errorHandler);
+				}, function(e) {
+					if (e.code === FileError.NOT_FOUND_ERR) {
+						fs.root.getFile(fileName, {
+							create : true
+						}, function(fileEntry) {
+							createWriteImage(fileEntry, fullCanvasToURL, callback)();
+						}, errorHandler);
+					} else {
+						return errorHandler(e);
+					}
+				});
+			}, function(e) {
+				if (e.code === FileError.NOT_FOUND_ERR) {
+					fs.root.getFile(fileName, {
+						create : true
+					}, function(fileEntry) {
+						createWriteImage(fileEntry, fullCanvasToURL, callback)();
+					}, errorHandler);
+				} else {
+					return errorHandler(e);
+				}
+			});
+
+		}, errorHandler);
+	}, errorHandler);
+	console.log('ultimo')
+	//		window.open(fullCanvas[0].toDataURL())
+	//	localStorage["imageJPG"] = fullCanvas[0].toDataURL('image/png');
+
+	//		window.open(fullCanvas[0].toDataURL());
+	return;
+}
+
 function copyToCanvas(ctx, fullCanvas) {
+	console.log('entra a copy to canvas')
 	if (!captures.length) {
-	//	window.open(fullCanvas[0].toDataURL('image/png'));
-		return;
+		writeToFile('test', fullCanvas[0].toDataURL('image/png'), openEdit);
 	}
+
 	var item = captures.pop();
 	var imageSrc = item[0];
 	var imageInfo = item[1];
@@ -178,7 +229,6 @@ function copyToCanvas(ctx, fullCanvas) {
 }
 
 function buildFullImage(request) {
-	console.log('INFO: ' + request.captures.length + ' ' + request.documentHeight + ' ' + request.documentWidth);
 	//	captures = request.captures;
 	//.reverse();
 	var fullCanvas = $('<canvas style="display:none" id="easyCaptureFullCanvas" />');
@@ -211,15 +261,15 @@ var commands = {
 	"full-image" : fullimage,
 	"extract-image" : extractImage,
 	"set-image" : function(request, sendResponse) {
-		localStorage["imageJPG"] = request.imageJPG;
+		writeToFile('test', request.imageJPG);
 	},
 	"capture-tab-image" : function(request, sendResponse) {
 		console.log('recibio msg')
 		captureTabImage(request, sendResponse);
 	},
 	"build-full-image" : function(request, sendResponse) {
-		startFullImage(request);
-		//		buildFullImage(request);
+		//		startFullImage(request);
+		buildFullImage(request);
 	}
 };
 
