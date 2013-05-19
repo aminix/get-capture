@@ -58,7 +58,6 @@ background-color: #eee !important;
 }
 
 #widthLabel {
-	width: 72px;
 	min-height: 20px;
 	margin-top: 8px;
 	margin-bottom: 1px;
@@ -66,7 +65,6 @@ background-color: #eee !important;
 }
 
 #heightLabel {
-	width: 72px;
 	min-height: 20px;
 	margin-top: 8px;
 	margin-bottom: 1px;
