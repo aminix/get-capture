@@ -72,11 +72,10 @@ background-color: #eee !important;
 }
 
 #newWidthInput  {
-	width:72px;
+	float: left;
 }
 
 #newHeightInput  {
-	width:72px;
 }
 
 #setResizeButton {
