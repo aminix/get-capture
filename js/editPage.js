@@ -190,18 +190,21 @@ function setButtonEventListener() {
 		$('.facebookForm').removeClass('showClass');
 	});
 
-	$('#setDrawButton').click('click', trackButton);
-	$('#setLineButton').click('click', trackButton);
-	$('#setSquareButton').click('click', trackButton);
-	$('#setFullSquareButton').click('click', trackButton);
-	$('#setCircleButton').click('click', trackButton);
-	$('#setFullCircleButton').click('click', trackButton);
-	$('#stepBackButton').click('click', trackButton);
-	$('#stepForwardButton').click('click', trackButton);
-	$('#colorSelector').click('click', trackButton);
-	$('#printEditor').click('click', trackButton);
-	$('#colorSelector').click('click', trackButton);
-	$('#sizeSelect').click('click', trackButton);
+	$('#setDrawButton').click(trackButton);
+	$('#setLineButton').click(trackButton);
+	$('#setSquareButton').click(trackButton);
+	$('#setFullSquareButton').click(trackButton);
+	$('#setCircleButton').click(trackButton);
+	$('#setFullCircleButton').click(trackButton);
+	$('#stepBackButton').click(trackButton);
+	$('#stepForwardButton').click(trackButton);
+	$('#colorSelector').click(trackButton);
+	$('#printEditor').click(trackButton);
+	$('#colorSelector').click(trackButton);
+	$('#sizeSelect').click(trackButton);
+	$('#facebookConnect').click(trackButton);
+	$('#setResizeButton').click(trackButton);
+	$('#setResetsButton').click(trackButton);
 
 }
 
