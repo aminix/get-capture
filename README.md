@@ -2,6 +2,7 @@ Get-Capture offers you a simple way to capture screenshots on your Chrome browse
 .
 To install it go to https://chrome.google.com/webstore/detail/get-capture/ofofpdbbakldpebkkfhpoelochcpmgga and add it to your extensions
 .
+.
 You have different options for capturing:
 - Select area (Alt+X): you can select the part of the window you want and when you are done, open the editor to play with it.
 - Visible image (Alt+C): automatically take a pic of your view.
